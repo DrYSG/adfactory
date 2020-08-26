@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ktg1adf"
+		},
+		"amlblob_connectionString": {
+			"value": ""
+		},
+		"ktg1blob_servicePrincipalKey": {
+			"value": ""
+		},
+		"ktg1blob_properties_typeProperties_url": {
+			"value": "https://ktg1blob.dfs.core.windows.net"
+		},
+		"ktg1blob_properties_typeProperties_tenant": {
+			"value": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
+		},
+		"ktg1blob_properties_typeProperties_servicePrincipalId": {
+			"value": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
+		}
+	}
+}

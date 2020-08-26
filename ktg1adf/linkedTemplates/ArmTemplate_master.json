@@ -1,0 +1,77 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ktg1adf"
+		},
+		"amlblob_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'amlblob'"
+		},
+		"ktg1blob_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
+		},
+		"ktg1blob_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
+		},
+		"ktg1blob_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
+		},
+		"ktg1blob_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ktg1adf_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"amlblob_connectionString": {
+						"value": "[parameters('amlblob_connectionString')]"
+					},
+					"ktg1blob_servicePrincipalKey": {
+						"value": "[parameters('ktg1blob_servicePrincipalKey')]"
+					},
+					"ktg1blob_properties_typeProperties_url": {
+						"value": "[parameters('ktg1blob_properties_typeProperties_url')]"
+					},
+					"ktg1blob_properties_typeProperties_tenant": {
+						"value": "[parameters('ktg1blob_properties_typeProperties_tenant')]"
+					},
+					"ktg1blob_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('ktg1blob_properties_typeProperties_servicePrincipalId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
