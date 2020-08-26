@@ -155,7 +155,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow1",
+						"referenceName": "airports",
 						"type": "DataFlowReference"
 					},
 					"compute": {

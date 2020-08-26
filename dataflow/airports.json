@@ -1,24 +1,20 @@
 {
-	"name": "dataflow1",
+	"name": "airports",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
-					"linkedService": {
-						"referenceName": "ktg1blob",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "airportsCSVLake",
+						"type": "DatasetReference"
 					},
-					"schemaLinkedService": {
-						"referenceName": "ktg1blob",
-						"type": "LinkedServiceReference"
-					},
-					"name": "airportsCSV"
+					"name": "airports"
 				}
 			],
 			"sinks": [],
 			"transformations": [],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'excel',\n\tfileSystem: 'adf',\n\tfolderPath: 'flights',\n\tfileName: 'airports.csv',\n\tsheetName: '',\n\tfirstRowAsHeader: true) ~> airportsCSV"
+			"script": "source(output(\n\t\tIATA_CODE as string,\n\t\tAIRPORT as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tCOUNTRY as string,\n\t\tLATITUDE as double,\n\t\tLONGITUDE as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true) ~> airports"
 		}
 	}
 }
