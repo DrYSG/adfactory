@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "junkFolder",
+						"referenceName": "temp",
 						"type": "DatasetReference"
 					},
 					"name": "AirportCount"
@@ -29,7 +29,7 @@
 					"name": "stateAirports"
 				}
 			],
-			"script": "source(output(\n\t\tIATA_CODE as string,\n\t\tAIRPORT as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tCOUNTRY as string,\n\t\tLATITUDE as string,\n\t\tLONGITUDE as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true) ~> airports\nairports filter(rlike(COUNTRY, 'USA')) ~> usa\nusa aggregate(groupBy(STATE),\n\tAIRPORT = count(AIRPORT)) ~> stateAirports\nstateAirports sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> AirportCount"
+			"script": "source(output(\n\t\tIATA_CODE as string,\n\t\tAIRPORT as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tCOUNTRY as string,\n\t\tLATITUDE as string,\n\t\tLONGITUDE as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true) ~> airports\nairports filter(rlike(COUNTRY, 'USA')) ~> usa\nusa aggregate(groupBy(STATE),\n\tAIRPORT = count(AIRPORT)) ~> stateAirports\nstateAirports sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\ttruncate: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> AirportCount"
 		}
 	}
 }
