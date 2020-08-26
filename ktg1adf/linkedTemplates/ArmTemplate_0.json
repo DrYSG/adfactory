@@ -153,47 +153,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/airports')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "airportsCSVLake",
-								"type": "DatasetReference"
-							},
-							"name": "airports"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "junkFolder",
-								"type": "DatasetReference"
-							},
-							"name": "AirportCount"
-						}
-					],
-					"transformations": [
-						{
-							"name": "usa"
-						},
-						{
-							"name": "stateAirports"
-						}
-					],
-					"script": "source(output(\n\t\tIATA_CODE as string,\n\t\tAIRPORT as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tCOUNTRY as string,\n\t\tLATITUDE as string,\n\t\tLONGITUDE as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true) ~> airports\nairports filter(rlike(COUNTRY, 'USA')) ~> usa\nusa aggregate(groupBy(STATE),\n\tAIRPORT = count(AIRPORT)) ~> stateAirports\nstateAirports sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> AirportCount"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/airportsCSVLake')]",
-				"[concat(variables('factoryId'), '/datasets/junkFolder')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/csv2parquet')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -339,9 +298,66 @@
 								"parameters": {}
 							}
 						]
-					},
+					}
+				],
+				"concurrency": 2,
+				"annotations": [],
+				"lastPublishTime": "2020-08-26T14:41:26Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/airportsCSVLake')]",
+				"[concat(variables('factoryId'), '/datasets/junkFolder')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/airports')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "airportsCSVLake",
+								"type": "DatasetReference"
+							},
+							"name": "airports"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "junkFolder",
+								"type": "DatasetReference"
+							},
+							"name": "AirportCount"
+						}
+					],
+					"transformations": [
+						{
+							"name": "usa"
+						},
+						{
+							"name": "stateAirports"
+						}
+					],
+					"script": "source(output(\n\t\tIATA_CODE as string,\n\t\tAIRPORT as string,\n\t\tCITY as string,\n\t\tSTATE as string,\n\t\tCOUNTRY as string,\n\t\tLATITUDE as string,\n\t\tLONGITUDE as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true) ~> airports\nairports filter(rlike(COUNTRY, 'USA')) ~> usa\nusa aggregate(groupBy(STATE),\n\tAIRPORT = count(AIRPORT)) ~> stateAirports\nstateAirports sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> AirportCount"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/airportsCSVLake')]",
+				"[concat(variables('factoryId'), '/datasets/junkFolder')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/airportsCounter')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
 					{
-						"name": "dataflow1",
+						"name": "airportsFlow",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -370,13 +386,9 @@
 						}
 					}
 				],
-				"concurrency": 2,
-				"annotations": [],
-				"lastPublishTime": "2020-08-26T14:41:26Z"
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/airportsCSVLake')]",
-				"[concat(variables('factoryId'), '/datasets/junkFolder')]",
 				"[concat(variables('factoryId'), '/dataflows/airports')]"
 			]
 		}

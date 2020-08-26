@@ -1,0 +1,202 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ktg1adf"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/airportsCounter')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "airportsFlow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "airports",
+								"type": "DataFlowReference"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/csv2parquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "csv2csvblob",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"additionalColumns": [
+									{
+										"name": "path",
+										"value": "$$FILEPATH"
+									}
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"maxConcurrentConnections": 2
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"parallelCopies": 2,
+							"enableSkipIncompatibleRow": false,
+							"validateDataConsistency": true,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "IATA_CODE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "IATA_CODE"
+										}
+									},
+									{
+										"source": {
+											"name": "AIRPORT",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AIRPORT"
+										}
+									},
+									{
+										"source": {
+											"name": "CITY",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CITY"
+										}
+									},
+									{
+										"source": {
+											"name": "STATE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "STATE"
+										}
+									},
+									{
+										"source": {
+											"name": "COUNTRY",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "COUNTRY"
+										}
+									},
+									{
+										"source": {
+											"name": "LATITUDE",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "LATITUDE"
+										}
+									},
+									{
+										"source": {
+											"name": "LONGITUDE",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "LONGITUDE"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "airportsCSVLake",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "junkFolder",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"concurrency": 2,
+				"annotations": [],
+				"lastPublishTime": "2020-08-26T14:41:26Z"
+			},
+			"dependsOn": []
+		}
+	]
+}

@@ -33,6 +33,48 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/airportsCounter')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "airportsFlow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "airports",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"airports": {},
+									"AirportCount": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/airports')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/csv2parquet')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -178,35 +220,6 @@
 								"parameters": {}
 							}
 						]
-					},
-					{
-						"name": "dataflow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "airports",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"airports": {},
-									"AirportCount": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							}
-						}
 					}
 				],
 				"concurrency": 2,
@@ -215,8 +228,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/airportsCSVLake')]",
-				"[concat(variables('factoryId'), '/datasets/junkFolder')]",
-				"[concat(variables('factoryId'), '/dataflows/airports')]"
+				"[concat(variables('factoryId'), '/datasets/junkFolder')]"
 			]
 		},
 		{
