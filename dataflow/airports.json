@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "temp",
+						"referenceName": "airportCount",
 						"type": "DatasetReference"
 					},
 					"name": "AirportCount"
