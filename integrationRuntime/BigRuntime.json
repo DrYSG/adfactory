@@ -1,0 +1,17 @@
+{
+	"name": "BigRuntime",
+	"properties": {
+		"type": "Managed",
+		"description": "16 cores +16 drivers",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US",
+				"dataFlowProperties": {
+					"computeType": "MemoryOptimized",
+					"coreCount": 32,
+					"timeToLive": 0
+				}
+			}
+		}
+	}
+}
