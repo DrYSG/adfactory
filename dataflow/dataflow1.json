@@ -1,0 +1,24 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "ktg1blob",
+						"type": "LinkedServiceReference"
+					},
+					"schemaLinkedService": {
+						"referenceName": "ktg1blob",
+						"type": "LinkedServiceReference"
+					},
+					"name": "airportsCSV"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'excel',\n\tfileSystem: 'adf',\n\tfolderPath: 'flights',\n\tfileName: 'airports.csv',\n\tsheetName: '',\n\tfirstRowAsHeader: true) ~> airportsCSV"
+		}
+	}
+}
