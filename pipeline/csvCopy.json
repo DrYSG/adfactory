@@ -50,6 +50,39 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "SendMail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "copyEngine",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-64.eastus.logic.azure.com:443/workflows/eb42e3a6e0664971acefe709dbb334c6/triggers/request/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Frequest%2Frun&sv=1.0&sig=QlMo8FAXWXf1gCSoYgM-HTyYehn-k1njaj2dNR0vrD4",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"message": "@{activity('Copy1').output.dataWritten}",
+						"dataFactory": "@{pipeline().DataFactory}",
+						"pipeline": "@{pipeline().Pipeline}",
+						"email": "@pipeline().parameters.email"
+					}
+				}
 			}
 		],
 		"concurrency": 2,
