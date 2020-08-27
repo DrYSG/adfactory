@@ -314,7 +314,7 @@
 								"Content-Type": "application/json"
 							},
 							"body": {
-								"message": "@{activity('Copy1').output.dataWritten}",
+								"message": "@{activity('copyEngine').output.dataWritten}",
 								"dataFactory": "@{pipeline().DataFactory}",
 								"pipeline": "@{pipeline().Pipeline}",
 								"email": "@pipeline().parameters.email"
