@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileSystem": "@pipeline().parameters.sinkPath"
+				"fileName": "@pipeline().parameters.sinkPath"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
