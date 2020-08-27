@@ -1,7 +1,42 @@
 {
 	"name": "csvCopy",
 	"properties": {
+		"activities": [
+			{
+				"name": "copyEngine",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
 		"concurrency": 2,
+		"parameters": {
+			"sourcePath": {
+				"type": "string"
+			},
+			"sinkPath": {
+				"type": "string"
+			},
+			"email": {
+				"type": "string"
+			},
+			"pipeline": {
+				"type": "string"
+			},
+			"dataFactory": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
