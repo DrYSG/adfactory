@@ -317,7 +317,9 @@
 								"message": "@{activity('copyEngine').output.dataWritten}",
 								"dataFactory": "@{pipeline().DataFactory}",
 								"pipeline": "@{pipeline().Pipeline}",
-								"email": "@pipeline().parameters.email"
+								"email": "@pipeline().parameters.email",
+								"source": "@pipeline().parameters.sourcePath",
+								"dest": "@pipeline().parameters.sinkPath"
 							}
 						}
 					}
