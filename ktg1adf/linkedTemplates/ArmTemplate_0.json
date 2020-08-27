@@ -550,12 +550,6 @@
 					},
 					"email": {
 						"type": "string"
-					},
-					"pipeline": {
-						"type": "string"
-					},
-					"dataFactory": {
-						"type": "string"
 					}
 				},
 				"annotations": []
