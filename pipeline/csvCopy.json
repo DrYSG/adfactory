@@ -1,0 +1,7 @@
+{
+	"name": "csvCopy",
+	"properties": {
+		"concurrency": 2,
+		"annotations": []
+	}
+}
