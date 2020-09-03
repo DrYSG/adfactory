@@ -2,9 +2,10 @@
 	"name": "mem4",
 	"properties": {
 		"type": "Managed",
+		"description": "4+4 (15 TTL)",
 		"typeProperties": {
 			"computeProperties": {
-				"location": "AutoResolve",
+				"location": "East US",
 				"dataFlowProperties": {
 					"computeType": "MemoryOptimized",
 					"coreCount": 8,
