@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_n2f",
+				"name": "Copy_Flights",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
