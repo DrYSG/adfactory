@@ -9,12 +9,30 @@
 						"referenceName": "flightsFullCSVLake",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "flights"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
-			"script": "source(output(\n\t\tYEAR as string,\n\t\tMONTH as string,\n\t\tDAY as string,\n\t\tDAY_OF_WEEK as string,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as string,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as string,\n\t\tDEPARTURE_TIME as string,\n\t\tDEPARTURE_DELAY as string,\n\t\tTAXI_OUT as string,\n\t\tWHEELS_OFF as string,\n\t\tSCHEDULED_TIME as string,\n\t\tELAPSED_TIME as string,\n\t\tAIR_TIME as string,\n\t\tDISTANCE as string,\n\t\tWHEELS_ON as string,\n\t\tTAXI_IN as string,\n\t\tSCHEDULED_ARRIVAL as string,\n\t\tARRIVAL_TIME as string,\n\t\tARRIVAL_DELAY as string,\n\t\tDIVERTED as string,\n\t\tCANCELLED as string,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as string,\n\t\tSECURITY_DELAY as string,\n\t\tAIRLINE_DELAY as string,\n\t\tLATE_AIRCRAFT_DELAY as string,\n\t\tWEATHER_DELAY as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true) ~> source1"
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "flightsFolderCSV",
+						"type": "DatasetReference"
+					},
+					"name": "writer"
+				}
+			],
+			"transformations": [
+				{
+					"name": "keyStream"
+				},
+				{
+					"name": "selectStream"
+				},
+				{
+					"name": "filtered"
+				}
+			],
+			"script": "source(output(\n\t\tYEAR as string,\n\t\tMONTH as string,\n\t\tDAY as string,\n\t\tDAY_OF_WEEK as string,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as string,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as string,\n\t\tDEPARTURE_TIME as string,\n\t\tDEPARTURE_DELAY as string,\n\t\tTAXI_OUT as string,\n\t\tWHEELS_OFF as string,\n\t\tSCHEDULED_TIME as string,\n\t\tELAPSED_TIME as string,\n\t\tAIR_TIME as string,\n\t\tDISTANCE as string,\n\t\tWHEELS_ON as string,\n\t\tTAXI_IN as string,\n\t\tSCHEDULED_ARRIVAL as string,\n\t\tARRIVAL_TIME as string,\n\t\tARRIVAL_DELAY as string,\n\t\tDIVERTED as string,\n\t\tCANCELLED as string,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as string,\n\t\tSECURITY_DELAY as string,\n\t\tAIRLINE_DELAY as string,\n\t\tLATE_AIRCRAFT_DELAY as string,\n\t\tWEATHER_DELAY as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true) ~> flights\nflights keyGenerate(output(id as long),\n\tstartAt: 1L) ~> keyStream\nkeyStream derive(modKey = mod(id, 1000) == 5) ~> selectStream\nselectStream filter(modKey) ~> filtered\nfiltered sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flightsSmall.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writer"
 		}
 	}
 }
