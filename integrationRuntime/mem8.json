@@ -1,0 +1,16 @@
+{
+	"name": "mem8",
+	"properties": {
+		"type": "Managed",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US",
+				"dataFlowProperties": {
+					"computeType": "MemoryOptimized",
+					"coreCount": 16,
+					"timeToLive": 10
+				}
+			}
+		}
+	}
+}
