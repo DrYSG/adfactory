@@ -6,26 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "ktg1adf"
-		},
-		"amlblob_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'amlblob'"
-		},
-		"ktg1blob_servicePrincipalKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
-		},
-		"ktg1blob_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
-		},
-		"ktg1blob_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
-		},
-		"ktg1blob_properties_typeProperties_servicePrincipalId": {
-			"type": "string",
-			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
 		}
 	},
 	"variables": {
@@ -89,15 +69,13 @@
 						"inputs": [
 							{
 								"referenceName": "SourceDataset_n2f",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "DestinationDataset_n2f",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					}
@@ -107,48 +85,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset_n2f')]",
 				"[concat(variables('factoryId'), '/datasets/DestinationDataset_n2f')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/writeFlightsSmall')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "fullFlights",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "fullFlights",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"flights": {},
-									"writer": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							}
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/fullFlights')]"
 			]
 		},
 		{
@@ -176,9 +112,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SourceDataset_n2f')]",
@@ -331,282 +265,6 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/airportsCSVLake')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "airports.csv",
-						"folderPath": "flights",
-						"fileSystem": "adf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "IATA_CODE",
-						"type": "String"
-					},
-					{
-						"name": "AIRPORT",
-						"type": "String"
-					},
-					{
-						"name": "CITY",
-						"type": "String"
-					},
-					{
-						"name": "STATE",
-						"type": "String"
-					},
-					{
-						"name": "COUNTRY",
-						"type": "String"
-					},
-					{
-						"name": "LATITUDE",
-						"type": "String"
-					},
-					{
-						"name": "LONGITUDE",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/flightsFolderCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "flights",
-						"fileSystem": "adf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/flightsFullCSVLake')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "flights2015.csv",
-						"folderPath": "ktg/flights",
-						"fileSystem": "azml"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "YEAR",
-						"type": "String"
-					},
-					{
-						"name": "MONTH",
-						"type": "String"
-					},
-					{
-						"name": "DAY",
-						"type": "String"
-					},
-					{
-						"name": "DAY_OF_WEEK",
-						"type": "String"
-					},
-					{
-						"name": "AIRLINE",
-						"type": "String"
-					},
-					{
-						"name": "FLIGHT_NUMBER",
-						"type": "String"
-					},
-					{
-						"name": "TAIL_NUMBER",
-						"type": "String"
-					},
-					{
-						"name": "ORIGIN_AIRPORT",
-						"type": "String"
-					},
-					{
-						"name": "DESTINATION_AIRPORT",
-						"type": "String"
-					},
-					{
-						"name": "SCHEDULED_DEPARTURE",
-						"type": "String"
-					},
-					{
-						"name": "DEPARTURE_TIME",
-						"type": "String"
-					},
-					{
-						"name": "DEPARTURE_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "TAXI_OUT",
-						"type": "String"
-					},
-					{
-						"name": "WHEELS_OFF",
-						"type": "String"
-					},
-					{
-						"name": "SCHEDULED_TIME",
-						"type": "String"
-					},
-					{
-						"name": "ELAPSED_TIME",
-						"type": "String"
-					},
-					{
-						"name": "AIR_TIME",
-						"type": "String"
-					},
-					{
-						"name": "DISTANCE",
-						"type": "String"
-					},
-					{
-						"name": "WHEELS_ON",
-						"type": "String"
-					},
-					{
-						"name": "TAXI_IN",
-						"type": "String"
-					},
-					{
-						"name": "SCHEDULED_ARRIVAL",
-						"type": "String"
-					},
-					{
-						"name": "ARRIVAL_TIME",
-						"type": "String"
-					},
-					{
-						"name": "ARRIVAL_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "DIVERTED",
-						"type": "String"
-					},
-					{
-						"name": "CANCELLED",
-						"type": "String"
-					},
-					{
-						"name": "CANCELLATION_REASON",
-						"type": "String"
-					},
-					{
-						"name": "AIR_SYSTEM_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "SECURITY_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "AIRLINE_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "LATE_AIRCRAFT_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "WEATHER_DELAY",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/amlblob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "amlblob",
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('amlblob_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1blob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "ktg1blob",
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ktg1blob_properties_typeProperties_url')]",
-					"tenant": "[parameters('ktg1blob_properties_typeProperties_tenant')]",
-					"servicePrincipalId": "[parameters('ktg1blob_properties_typeProperties_servicePrincipalId')]",
-					"servicePrincipalKey": {
-						"type": "SecureString",
-						"value": "[parameters('ktg1blob_servicePrincipalKey')]"
-					}
-				}
-			},
 			"dependsOn": []
 		},
 		{
@@ -651,10 +309,7 @@
 					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as short,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as short,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as short,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tpartitionBy('roundRobin', 4)) ~> flights\nflights keyGenerate(output(id as long),\n\tstartAt: 1L) ~> keyStream\nkeyStream derive(modKey = mod(id, 1000) == 5) ~> selectStream\nselectStream filter(modKey) ~> filtered\nfiltered select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tDEPARTURE_DELAY,\n\t\tTAXI_OUT,\n\t\tWHEELS_OFF,\n\t\tSCHEDULED_TIME,\n\t\tELAPSED_TIME,\n\t\tAIR_TIME,\n\t\tDISTANCE,\n\t\tWHEELS_ON,\n\t\tTAXI_IN,\n\t\tSCHEDULED_ARRIVAL,\n\t\tARRIVAL_TIME,\n\t\tARRIVAL_DELAY,\n\t\tDIVERTED,\n\t\tCANCELLED,\n\t\tCANCELLATION_REASON,\n\t\tAIR_SYSTEM_DELAY,\n\t\tSECURITY_DELAY,\n\t\tAIRLINE_DELAY,\n\t\tLATE_AIRCRAFT_DELAY,\n\t\tWEATHER_DELAY,\n\t\tid\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> final\nfinal sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flightsSmall.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writer"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/flightsFullCSVLake')]",
-				"[concat(variables('factoryId'), '/datasets/flightsFolderCSV')]"
-			]
+			"dependsOn": []
 		}
 	]
 }

@@ -67,6 +67,190 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_n2f')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ktg1blob",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "flightsFull.csv",
+						"folderPath": "flights",
+						"fileSystem": "adf"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_n2f')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ktg1blob",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "flights2015.csv",
+						"folderPath": "ktg/flights",
+						"fileSystem": "azml"
+					},
+					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "YEAR",
+						"type": "String"
+					},
+					{
+						"name": "MONTH",
+						"type": "String"
+					},
+					{
+						"name": "DAY",
+						"type": "String"
+					},
+					{
+						"name": "DAY_OF_WEEK",
+						"type": "String"
+					},
+					{
+						"name": "AIRLINE",
+						"type": "String"
+					},
+					{
+						"name": "FLIGHT_NUMBER",
+						"type": "String"
+					},
+					{
+						"name": "TAIL_NUMBER",
+						"type": "String"
+					},
+					{
+						"name": "ORIGIN_AIRPORT",
+						"type": "String"
+					},
+					{
+						"name": "DESTINATION_AIRPORT",
+						"type": "String"
+					},
+					{
+						"name": "SCHEDULED_DEPARTURE",
+						"type": "String"
+					},
+					{
+						"name": "DEPARTURE_TIME",
+						"type": "String"
+					},
+					{
+						"name": "DEPARTURE_DELAY",
+						"type": "String"
+					},
+					{
+						"name": "TAXI_OUT",
+						"type": "String"
+					},
+					{
+						"name": "WHEELS_OFF",
+						"type": "String"
+					},
+					{
+						"name": "SCHEDULED_TIME",
+						"type": "String"
+					},
+					{
+						"name": "ELAPSED_TIME",
+						"type": "String"
+					},
+					{
+						"name": "AIR_TIME",
+						"type": "String"
+					},
+					{
+						"name": "DISTANCE",
+						"type": "String"
+					},
+					{
+						"name": "WHEELS_ON",
+						"type": "String"
+					},
+					{
+						"name": "TAXI_IN",
+						"type": "String"
+					},
+					{
+						"name": "SCHEDULED_ARRIVAL",
+						"type": "String"
+					},
+					{
+						"name": "ARRIVAL_TIME",
+						"type": "String"
+					},
+					{
+						"name": "ARRIVAL_DELAY",
+						"type": "String"
+					},
+					{
+						"name": "DIVERTED",
+						"type": "String"
+					},
+					{
+						"name": "CANCELLED",
+						"type": "String"
+					},
+					{
+						"name": "CANCELLATION_REASON",
+						"type": "String"
+					},
+					{
+						"name": "AIR_SYSTEM_DELAY",
+						"type": "String"
+					},
+					{
+						"name": "SECURITY_DELAY",
+						"type": "String"
+					},
+					{
+						"name": "AIRLINE_DELAY",
+						"type": "String"
+					},
+					{
+						"name": "LATE_AIRCRAFT_DELAY",
+						"type": "String"
+					},
+					{
+						"name": "WEATHER_DELAY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/airportsCSVLake')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -307,6 +491,83 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/copyFlights')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_Flights",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "azml/ktg/flights/flights2015.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "adf/flights/flightsFull.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"maxConcurrentConnections": 5
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": true
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_n2f",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_n2f",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_n2f')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_n2f')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/fullFlights')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -345,7 +606,7 @@
 							"name": "final"
 						}
 					],
-					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as short,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as short,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as short,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> flights\nflights keyGenerate(output(id as long),\n\tstartAt: 1L) ~> keyStream\nkeyStream derive(modKey = mod(id, 1000) == 5) ~> selectStream\nselectStream filter(modKey) ~> filtered\nfiltered select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tDEPARTURE_DELAY,\n\t\tTAXI_OUT,\n\t\tWHEELS_OFF,\n\t\tSCHEDULED_TIME,\n\t\tELAPSED_TIME,\n\t\tAIR_TIME,\n\t\tDISTANCE,\n\t\tWHEELS_ON,\n\t\tTAXI_IN,\n\t\tSCHEDULED_ARRIVAL,\n\t\tARRIVAL_TIME,\n\t\tARRIVAL_DELAY,\n\t\tDIVERTED,\n\t\tCANCELLED,\n\t\tCANCELLATION_REASON,\n\t\tAIR_SYSTEM_DELAY,\n\t\tSECURITY_DELAY,\n\t\tAIRLINE_DELAY,\n\t\tLATE_AIRCRAFT_DELAY,\n\t\tWEATHER_DELAY,\n\t\tid\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> final\nfinal sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flightsSmall.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writer"
+					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as short,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as short,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as short,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tpartitionBy('roundRobin', 4)) ~> flights\nflights keyGenerate(output(id as long),\n\tstartAt: 1L) ~> keyStream\nkeyStream derive(modKey = mod(id, 1000) == 5) ~> selectStream\nselectStream filter(modKey) ~> filtered\nfiltered select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tDEPARTURE_DELAY,\n\t\tTAXI_OUT,\n\t\tWHEELS_OFF,\n\t\tSCHEDULED_TIME,\n\t\tELAPSED_TIME,\n\t\tAIR_TIME,\n\t\tDISTANCE,\n\t\tWHEELS_ON,\n\t\tTAXI_IN,\n\t\tSCHEDULED_ARRIVAL,\n\t\tARRIVAL_TIME,\n\t\tARRIVAL_DELAY,\n\t\tDIVERTED,\n\t\tCANCELLED,\n\t\tCANCELLATION_REASON,\n\t\tAIR_SYSTEM_DELAY,\n\t\tSECURITY_DELAY,\n\t\tAIRLINE_DELAY,\n\t\tLATE_AIRCRAFT_DELAY,\n\t\tWEATHER_DELAY,\n\t\tid\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> final\nfinal sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flightsSmall.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writer"
 				}
 			},
 			"dependsOn": [
