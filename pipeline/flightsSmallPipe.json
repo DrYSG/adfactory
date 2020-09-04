@@ -1,6 +1,7 @@
 {
-	"name": "writeFlightsSmall",
+	"name": "flightsSmallPipe",
 	"properties": {
+		"description": "run dataflow for flights to small",
 		"activities": [
 			{
 				"name": "fullFlights",
