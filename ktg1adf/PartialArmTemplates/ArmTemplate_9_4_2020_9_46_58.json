@@ -6,26 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "ktg1adf"
-		},
-		"amlblob_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'amlblob'"
-		},
-		"ktg1blob_servicePrincipalKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
-		},
-		"ktg1blob_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
-		},
-		"ktg1blob_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
-		},
-		"ktg1blob_properties_typeProperties_servicePrincipalId": {
-			"type": "string",
-			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
 		}
 	},
 	"variables": {
@@ -54,14 +34,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "flights2Small",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"flights": {},
-									"writer": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
@@ -73,33 +47,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/flights2Small')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1CSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "adf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
 			]
 		},
 		{
@@ -122,62 +69,6 @@
 					"compressionCodec": "snappy"
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/amlblob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "amlblob",
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('amlblob_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1blob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "ktg1blob",
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ktg1blob_properties_typeProperties_url')]",
-					"tenant": "[parameters('ktg1blob_properties_typeProperties_tenant')]",
-					"servicePrincipalId": "[parameters('ktg1blob_properties_typeProperties_servicePrincipalId')]",
-					"servicePrincipalKey": {
-						"type": "SecureString",
-						"value": "[parameters('ktg1blob_servicePrincipalKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mem8')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"description": "8+8,10 TTL, MemOpt",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "East US",
-						"dataFlowProperties": {
-							"computeType": "MemoryOptimized",
-							"coreCount": 16,
-							"timeToLive": 10
-						}
-					}
-				}
 			},
 			"dependsOn": []
 		},
@@ -224,28 +115,6 @@
 					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as short,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as short,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as boolean,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short,\n\t\tid as integer\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\twildcardPaths:['flights/flightsFull.csv'],\n\tpartitionBy('roundRobin', 4)) ~> flights\nflights keyGenerate(output(id as long),\n\tstartAt: 1L) ~> keyStream\nkeyStream derive(modKey = mod(id, 1000) == 5) ~> selectStream\nselectStream filter(modKey) ~> filtered\nfiltered select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tDEPARTURE_DELAY,\n\t\tTAXI_OUT,\n\t\tWHEELS_OFF,\n\t\tSCHEDULED_TIME,\n\t\tELAPSED_TIME,\n\t\tAIR_TIME,\n\t\tDISTANCE,\n\t\tWHEELS_ON,\n\t\tTAXI_IN,\n\t\tSCHEDULED_ARRIVAL,\n\t\tARRIVAL_TIME,\n\t\tARRIVAL_DELAY,\n\t\tDIVERTED,\n\t\tCANCELLED,\n\t\tCANCELLATION_REASON,\n\t\tAIR_SYSTEM_DELAY,\n\t\tSECURITY_DELAY,\n\t\tAIRLINE_DELAY,\n\t\tLATE_AIRCRAFT_DELAY,\n\t\tWEATHER_DELAY,\n\t\tid\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> final\nfinal sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights/flightsSmall.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writer"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ktg1CSV')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mem4')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"description": "4+4, TTL=0",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "East US",
-						"dataFlowProperties": {
-							"computeType": "MemoryOptimized",
-							"coreCount": 8,
-							"timeToLive": 0
-						}
-					}
-				}
-			},
 			"dependsOn": []
 		},
 		{
@@ -287,7 +156,6 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ktg1CSV')]",
 				"[concat(variables('factoryId'), '/datasets/ktg1Parquet')]"
 			]
 		},
@@ -312,14 +180,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "flightsPrepare",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"flightsCSV": {},
-									"writeFlights5K": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"integrationRuntime": {
 								"referenceName": "mem4",
 								"type": "IntegrationRuntimeReference"
@@ -330,8 +192,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/flightsPrepare')]",
-				"[concat(variables('factoryId'), '/integrationRuntimes/mem4')]"
+				"[concat(variables('factoryId'), '/dataflows/flightsPrepare')]"
 			]
 		}
 	]
