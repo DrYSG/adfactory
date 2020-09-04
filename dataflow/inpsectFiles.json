@@ -1,0 +1,21 @@
+{
+	"name": "inpsectFiles",
+	"properties": {
+		"description": "Look at Parquet contents",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ktg1Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet') ~> source"
+		}
+	}
+}
