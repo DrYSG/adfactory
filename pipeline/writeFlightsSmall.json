@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "fullFlights",
+						"referenceName": "flights2Small",
 						"type": "DataFlowReference"
 					},
 					"compute": {

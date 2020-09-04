@@ -1,0 +1,13 @@
+{
+	"name": "flightsPrepare",
+	"properties": {
+		"description": "clean flights data, write to Parquet files",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"script": ""
+		}
+	}
+}

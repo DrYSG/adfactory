@@ -1,6 +1,7 @@
 {
-	"name": "fullFlights",
+	"name": "flights2Small",
 	"properties": {
+		"description": "take the FlightsFull and write FlightsSmall",
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
