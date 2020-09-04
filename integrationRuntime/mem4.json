@@ -1,0 +1,17 @@
+{
+	"name": "mem4",
+	"properties": {
+		"type": "Managed",
+		"description": "4+4, TTL=0",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US",
+				"dataFlowProperties": {
+					"computeType": "MemoryOptimized",
+					"coreCount": 8,
+					"timeToLive": 0
+				}
+			}
+		}
+	}
+}
