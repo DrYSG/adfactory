@@ -67,31 +67,12 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/mem4')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"description": "4+4 (15 TTL)",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "East US",
-						"dataFlowProperties": {
-							"computeType": "MemoryOptimized",
-							"coreCount": 8,
-							"timeToLive": 15
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/mem8')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"type": "Managed",
+				"description": "8+8,10 TTL, MemOpt",
 				"typeProperties": {
 					"computeProperties": {
 						"location": "East US",
@@ -106,244 +87,24 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/airportsCSVLake')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/mem4')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
+				"type": "Managed",
+				"description": "4+4, TTL=0",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "airports.csv",
-						"folderPath": "flights",
-						"fileSystem": "adf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "IATA_CODE",
-						"type": "String"
-					},
-					{
-						"name": "AIRPORT",
-						"type": "String"
-					},
-					{
-						"name": "CITY",
-						"type": "String"
-					},
-					{
-						"name": "STATE",
-						"type": "String"
-					},
-					{
-						"name": "COUNTRY",
-						"type": "String"
-					},
-					{
-						"name": "LATITUDE",
-						"type": "String"
-					},
-					{
-						"name": "LONGITUDE",
-						"type": "String"
+					"computeProperties": {
+						"location": "East US",
+						"dataFlowProperties": {
+							"computeType": "MemoryOptimized",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
 					}
-				]
+				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/flightsFolderCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "flights",
-						"fileSystem": "adf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/flightsFullCSVLake')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "flights2015.csv",
-						"folderPath": "ktg/flights",
-						"fileSystem": "azml"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "YEAR",
-						"type": "String"
-					},
-					{
-						"name": "MONTH",
-						"type": "String"
-					},
-					{
-						"name": "DAY",
-						"type": "String"
-					},
-					{
-						"name": "DAY_OF_WEEK",
-						"type": "String"
-					},
-					{
-						"name": "AIRLINE",
-						"type": "String"
-					},
-					{
-						"name": "FLIGHT_NUMBER",
-						"type": "String"
-					},
-					{
-						"name": "TAIL_NUMBER",
-						"type": "String"
-					},
-					{
-						"name": "ORIGIN_AIRPORT",
-						"type": "String"
-					},
-					{
-						"name": "DESTINATION_AIRPORT",
-						"type": "String"
-					},
-					{
-						"name": "SCHEDULED_DEPARTURE",
-						"type": "String"
-					},
-					{
-						"name": "DEPARTURE_TIME",
-						"type": "String"
-					},
-					{
-						"name": "DEPARTURE_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "TAXI_OUT",
-						"type": "String"
-					},
-					{
-						"name": "WHEELS_OFF",
-						"type": "String"
-					},
-					{
-						"name": "SCHEDULED_TIME",
-						"type": "String"
-					},
-					{
-						"name": "ELAPSED_TIME",
-						"type": "String"
-					},
-					{
-						"name": "AIR_TIME",
-						"type": "String"
-					},
-					{
-						"name": "DISTANCE",
-						"type": "String"
-					},
-					{
-						"name": "WHEELS_ON",
-						"type": "String"
-					},
-					{
-						"name": "TAXI_IN",
-						"type": "String"
-					},
-					{
-						"name": "SCHEDULED_ARRIVAL",
-						"type": "String"
-					},
-					{
-						"name": "ARRIVAL_TIME",
-						"type": "String"
-					},
-					{
-						"name": "ARRIVAL_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "DIVERTED",
-						"type": "String"
-					},
-					{
-						"name": "CANCELLED",
-						"type": "String"
-					},
-					{
-						"name": "CANCELLATION_REASON",
-						"type": "String"
-					},
-					{
-						"name": "AIR_SYSTEM_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "SECURITY_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "AIRLINE_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "LATE_AIRCRAFT_DELAY",
-						"type": "String"
-					},
-					{
-						"name": "WEATHER_DELAY",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ktg1CSV')]",
