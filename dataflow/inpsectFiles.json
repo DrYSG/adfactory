@@ -15,7 +15,7 @@
 			],
 			"sinks": [],
 			"transformations": [],
-			"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as short,\n\t\tSCHEDULED_TIME as short,\n\t\tDISTANCE as short,\n\t\tSCHEDULED_ARRIVAL as short,\n\t\t{late-flight} as boolean\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K'],\n\tpartitionBy('roundRobin', 8)) ~> source"
+			"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as short,\n\t\tSCHEDULED_TIME as short,\n\t\tDISTANCE as short,\n\t\tSCHEDULED_ARRIVAL as short,\n\t\t{late-flight} as boolean\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*'],\n\tpartitionBy('roundRobin', 8)) ~> source"
 		}
 	}
 }
