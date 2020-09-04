@@ -4,10 +4,18 @@
 		"description": "clean flights data, write to Parquet files",
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ktg1CSV",
+						"type": "DatasetReference"
+					},
+					"name": "flightsCSV"
+				}
+			],
 			"sinks": [],
 			"transformations": [],
-			"script": ""
+			"script": "source(allowSchemaDrift: false,\n\tvalidateSchema: false,\n\twildcardPaths:['flights/flightsSmall.csv'],\n\tpartitionBy('roundRobin', 8)) ~> flightsCSV"
 		}
 	}
 }
