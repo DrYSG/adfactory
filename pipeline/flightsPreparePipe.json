@@ -49,6 +49,13 @@
 						"referenceName": "ktg1Parquet",
 						"type": "DatasetReference"
 					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "ktg1blob",
+							"type": "LinkedServiceReference"
+						},
+						"path": "logs"
+					},
 					"enableLogging": true,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
