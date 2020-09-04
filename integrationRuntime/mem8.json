@@ -2,6 +2,7 @@
 	"name": "mem8",
 	"properties": {
 		"type": "Managed",
+		"description": "8+8,10 TTL, MemOpt",
 		"typeProperties": {
 			"computeProperties": {
 				"location": "East US",
