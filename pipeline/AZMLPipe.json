@@ -1,0 +1,30 @@
+{
+	"name": "AZMLPipe",
+	"properties": {
+		"activities": [
+			{
+				"name": "AZML Pipeline",
+				"type": "AzureMLExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"mlPipelineId": "0d2712e7-d61b-4457-b183-1f93acbc7bba",
+					"experimentName": "pure-flights",
+					"mlParentRunId": "3e6fbe59-01d7-4180-a677-016f1350f293"
+				},
+				"linkedServiceName": {
+					"referenceName": "ktg2AML",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
