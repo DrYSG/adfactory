@@ -23,7 +23,7 @@
 				}
 			],
 			"transformations": [],
-			"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as string,\n\t\tDEPARTURE_TIME as short,\n\t\tSCHEDULED_TIME as short,\n\t\tDISTANCE as short,\n\t\tSCHEDULED_ARRIVAL as string,\n\t\tlate_flight as boolean,\n\t\tcleanFlag as boolean,\n\t\tdepart_date as date,\n\t\tdepart_time as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/500K']) ~> source\nsource sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['temp/junk.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkhole"
+			"script": "source(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tcleanFlag as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/500K']) ~> source\nsource sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['temp/junk.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkhole"
 		}
 	}
 }
