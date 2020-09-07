@@ -18,7 +18,7 @@
 				"typeProperties": {
 					"notebookPath": "/Users/ygutfreund@outlook.com/adfArgs",
 					"baseParameters": {
-						"firstName": "@pipeline().paramaters.firstName",
+						"firstName": "@pipeline().parameters.firstName",
 						"lastName": "@pipeline().parameters.lastName"
 					}
 				},
