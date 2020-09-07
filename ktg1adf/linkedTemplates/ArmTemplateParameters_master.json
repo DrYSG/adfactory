@@ -11,6 +11,12 @@
 		"ktg1blob_servicePrincipalKey": {
 			"value": ""
 		},
+		"ktg2AML_servicePrincipalKey": {
+			"value": ""
+		},
+		"ktg1bricks_accessToken": {
+			"value": ""
+		},
 		"ktg1blob_properties_typeProperties_url": {
 			"value": "https://ktg1blob.dfs.core.windows.net"
 		},
@@ -19,6 +25,18 @@
 		},
 		"ktg1blob_properties_typeProperties_servicePrincipalId": {
 			"value": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
+		},
+		"ktg2AML_properties_typeProperties_subscriptionId": {
+			"value": "2a6a6da4-8792-4d69-8d5a-7df4f8ea230f"
+		},
+		"ktg2AML_properties_typeProperties_resourceGroupName": {
+			"value": "KTG1"
+		},
+		"ktg2AML_properties_typeProperties_servicePrincipalId": {
+			"value": "ktgApps2"
+		},
+		"ktg2AML_properties_typeProperties_tenant": {
+			"value": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
 		},
 		"containerUri": {
 			"value": ""

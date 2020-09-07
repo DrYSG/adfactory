@@ -15,6 +15,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
 		},
+		"ktg2AML_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
+		},
+		"ktg1bricks_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'ktg1bricks'"
+		},
 		"ktg1blob_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
@@ -26,6 +34,22 @@
 		"ktg1blob_properties_typeProperties_servicePrincipalId": {
 			"type": "string",
 			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
+		},
+		"ktg2AML_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "2a6a6da4-8792-4d69-8d5a-7df4f8ea230f"
+		},
+		"ktg2AML_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "KTG1"
+		},
+		"ktg2AML_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "ktgApps2"
+		},
+		"ktg2AML_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
 		},
 		"containerUri": {
 			"type": "string",
@@ -60,6 +84,12 @@
 					"ktg1blob_servicePrincipalKey": {
 						"value": "[parameters('ktg1blob_servicePrincipalKey')]"
 					},
+					"ktg2AML_servicePrincipalKey": {
+						"value": "[parameters('ktg2AML_servicePrincipalKey')]"
+					},
+					"ktg1bricks_accessToken": {
+						"value": "[parameters('ktg1bricks_accessToken')]"
+					},
 					"ktg1blob_properties_typeProperties_url": {
 						"value": "[parameters('ktg1blob_properties_typeProperties_url')]"
 					},
@@ -68,6 +98,18 @@
 					},
 					"ktg1blob_properties_typeProperties_servicePrincipalId": {
 						"value": "[parameters('ktg1blob_properties_typeProperties_servicePrincipalId')]"
+					},
+					"ktg2AML_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('ktg2AML_properties_typeProperties_subscriptionId')]"
+					},
+					"ktg2AML_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('ktg2AML_properties_typeProperties_resourceGroupName')]"
+					},
+					"ktg2AML_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('ktg2AML_properties_typeProperties_servicePrincipalId')]"
+					},
+					"ktg2AML_properties_typeProperties_tenant": {
+						"value": "[parameters('ktg2AML_properties_typeProperties_tenant')]"
 					}
 				}
 			},
