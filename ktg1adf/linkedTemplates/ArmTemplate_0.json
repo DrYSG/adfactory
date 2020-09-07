@@ -15,13 +15,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
 		},
-		"ktg2AML_servicePrincipalKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
-		},
 		"ktg1bricks_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'ktg1bricks'"
+		},
+		"ktg2AML_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
 		},
 		"ktg1blob_properties_typeProperties_url": {
 			"type": "string",
@@ -91,6 +91,30 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ktg1bricks')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "databricks",
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-2645919899729973.13.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('ktg1bricks_accessToken')]"
+					},
+					"newClusterNodeType": "Standard_DS3_v2",
+					"newClusterNumOfWorker": "1:4",
+					"newClusterSparkEnvVars": {
+						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+					},
+					"newClusterVersion": "7.2.x-cpu-ml-scala2.12"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ktg2AML')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -152,30 +176,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ktg1bricks')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "databricks",
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://adb-2645919899729973.13.azuredatabricks.net",
-					"accessToken": {
-						"type": "SecureString",
-						"value": "[parameters('ktg1bricks_accessToken')]"
-					},
-					"newClusterNodeType": "Standard_DS3_v2",
-					"newClusterNumOfWorker": "1:4",
-					"newClusterSparkEnvVars": {
-						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
-					},
-					"newClusterVersion": "7.2.x-cpu-ml-scala2.12"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AZMLPipe')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -208,6 +208,60 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ktg2AML')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/bricksPipe')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "DataBricks Pipe",
+				"activities": [
+					{
+						"name": "notebookArgs",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/ygutfreund@outlook.com/adfArgs",
+							"baseParameters": {
+								"firstName": {
+									"value": "@pipeline().parameters.firstName",
+									"type": "Expression"
+								},
+								"lastName": {
+									"value": "@pipeline().parameters.lastName",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ktg1bricks",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"parameters": {
+					"firstName": {
+						"type": "string",
+						"defaultValue": "Yechezkal"
+					},
+					"lastName": {
+						"type": "string",
+						"defaultValue": "Gutfreund"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ktg1bricks')]"
 			]
 		},
 		{
@@ -260,54 +314,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/bricksPipe')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "DataBricks Pipe",
-				"activities": [
-					{
-						"name": "notebookArgs",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/ygutfreund@outlook.com/adfArgs",
-							"baseParameters": {
-								"firstName": "@pipeline().parameters.firstName",
-								"lastName": "@pipeline().parameters.lastName"
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "ktg1bricks",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"parameters": {
-					"firstName": {
-						"type": "string",
-						"defaultValue": "Yechezkal"
-					},
-					"lastName": {
-						"type": "string",
-						"defaultValue": "Gutfreund"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1bricks')]"
 			]
 		},
 		{
@@ -415,9 +421,15 @@
 						},
 						{
 							"name": "departTime"
+						},
+						{
+							"name": "arrivalTime"
+						},
+						{
+							"name": "cleanColumns"
 						}
 					],
-					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as string,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as string,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as boolean,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short,\n\t\tid as integer\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\twildcardPaths:['flights/flightsSmall.csv'],\n\tpartitionBy('roundRobin', 8)) ~> flightsCSV\nflightsCSV derive(late_flight = (ARRIVAL_DELAY>30) || CANCELLED || DIVERTED) ~> isLate\ndepartTime select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tSCHEDULED_TIME,\n\t\tDISTANCE,\n\t\tSCHEDULED_ARRIVAL,\n\t\tlate_flight,\n\t\tcleanFlag,\n\t\tdepart_date,\n\t\tdepart_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Clone\nClone derive({500K} = mod(\r\n    crc32(DAY,DAY_OF_WEEK,FLIGHT_NUMBER,\r\n    TAIL_NUMBER,SCHEDULED_DEPARTURE,\r\n    SCHEDULED_TIME,DISTANCE,SCHEDULED_ARRIVAL),\r\n    10) == 7) ~> flag500K\nflag500K filter({500K}) ~> flights500K\nthinColumns derive(cleanFlag = false()) ~> cleanFlag\ncleanFlag derive(depart_date = toDate(toString(YEAR)+'-'+toString(MONTH)+'-'+toString(DAY)+ ' ')) ~> departDate\nisLate select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tSCHEDULED_TIME,\n\t\tDISTANCE,\n\t\tSCHEDULED_ARRIVAL,\n\t\tlate_flight\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> thinColumns\ndepartDate derive(depart_time = toTimestamp(toString(depart_date) + ' ' + \r\n    left(iif(length(SCHEDULED_DEPARTURE) == 3, \r\n    '0' + SCHEDULED_DEPARTURE, SCHEDULED_DEPARTURE)\r\n    ,2) + ':' + \r\nright(\r\n    iif(length(SCHEDULED_DEPARTURE) == 3, \r\n    '0' + SCHEDULED_DEPARTURE, SCHEDULED_DEPARTURE)\r\n    ,2)\r\n )) ~> departTime\nClone sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'5M/part[n].parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeFlights5M\nflights500K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'500K/part[n].parquet',\n\tmapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tSCHEDULED_TIME,\n\t\tDISTANCE,\n\t\tSCHEDULED_ARRIVAL,\n\t\tlate_flight,\n\t\tcleanFlag,\n\t\tdepart_date,\n\t\tdepart_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write500K"
+					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as string,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as string,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as boolean,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short,\n\t\tid as integer\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\twildcardPaths:['flights/flightsSmall.csv'],\n\tpartitionBy('roundRobin', 8)) ~> flightsCSV\nflightsCSV derive(late_flight = (ARRIVAL_DELAY>30) || CANCELLED || DIVERTED) ~> isLate\ncleanColumns select(mapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tcleanFlag,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Clone\nClone derive({500K} = mod(\r\n    crc32(DAY_OF_WEEK,FLIGHT_NUMBER,DISTANCE,\r\n    depart_time,arrival_time),\r\n    10) == 7) ~> flag500K\nflag500K filter({500K}) ~> flights500K\nthinColumns derive(cleanFlag = false()) ~> cleanFlag\ncleanFlag derive(depart_date = toDate(toString(YEAR)+'-'+toString(MONTH)+'-'+toString(DAY)+ ' ')) ~> departDate\nisLate select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tSCHEDULED_TIME,\n\t\tDISTANCE,\n\t\tSCHEDULED_ARRIVAL,\n\t\tlate_flight\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> thinColumns\ndepartDate derive(depart_time = toTimestamp(toString(depart_date) + ' ' + \r\n    left(\r\n        iif(length(SCHEDULED_DEPARTURE) == 3, \r\n    '0' + SCHEDULED_DEPARTURE, SCHEDULED_DEPARTURE)\r\n    ,2) + ':' + \r\n    right(\r\n        iif(length(SCHEDULED_DEPARTURE) == 3, \r\n    '0' + SCHEDULED_DEPARTURE, SCHEDULED_DEPARTURE)\r\n    ,2), \r\n'yyyy-MM-dd HH:mm')\r\n ) ~> departTime\ndepartTime derive(arrival_time = depart_time + minutes(toInteger(SCHEDULED_TIME))) ~> arrivalTime\narrivalTime select(mapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tcleanFlag,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> cleanColumns\nClone sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'5M/part[n].parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeFlights5M\nflights500K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'500K/part[n].parquet',\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tcleanFlag,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write500K"
 				}
 			},
 			"dependsOn": [

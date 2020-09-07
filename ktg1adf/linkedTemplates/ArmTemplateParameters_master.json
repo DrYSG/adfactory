@@ -11,10 +11,10 @@
 		"ktg1blob_servicePrincipalKey": {
 			"value": ""
 		},
-		"ktg2AML_servicePrincipalKey": {
+		"ktg1bricks_accessToken": {
 			"value": ""
 		},
-		"ktg1bricks_accessToken": {
+		"ktg2AML_servicePrincipalKey": {
 			"value": ""
 		},
 		"ktg1blob_properties_typeProperties_url": {

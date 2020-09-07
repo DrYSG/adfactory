@@ -15,13 +15,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
 		},
-		"ktg2AML_servicePrincipalKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
-		},
 		"ktg1bricks_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'ktg1bricks'"
+		},
+		"ktg2AML_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
 		},
 		"ktg1blob_properties_typeProperties_url": {
 			"type": "string",
@@ -84,11 +84,11 @@
 					"ktg1blob_servicePrincipalKey": {
 						"value": "[parameters('ktg1blob_servicePrincipalKey')]"
 					},
-					"ktg2AML_servicePrincipalKey": {
-						"value": "[parameters('ktg2AML_servicePrincipalKey')]"
-					},
 					"ktg1bricks_accessToken": {
 						"value": "[parameters('ktg1bricks_accessToken')]"
+					},
+					"ktg2AML_servicePrincipalKey": {
+						"value": "[parameters('ktg2AML_servicePrincipalKey')]"
 					},
 					"ktg1blob_properties_typeProperties_url": {
 						"value": "[parameters('ktg1blob_properties_typeProperties_url')]"
