@@ -1,0 +1,43 @@
+{
+	"name": "bricksPipe",
+	"properties": {
+		"description": "DataBricks Pipe",
+		"activities": [
+			{
+				"name": "notebookArgs",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ygutfreund@outlook.com/adfArgs",
+					"baseParameters": {
+						"firstName": "@pipeline().paramaters.firstName",
+						"lastName": "@pipeline().parameters.lastName"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ktg1bricks",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"firstName": {
+				"type": "string",
+				"defaultValue": "Yechezkal"
+			},
+			"lastName": {
+				"type": "string",
+				"defaultValue": "Gutfreund"
+			}
+		},
+		"annotations": []
+	}
+}
