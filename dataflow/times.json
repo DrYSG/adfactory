@@ -14,7 +14,7 @@
 			],
 			"sinks": [],
 			"transformations": [],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\twildcardPaths:['flights/flightsFull.csv']) ~> flightscsv"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tinferDriftedColumnTypes: true,\n\twildcardPaths:['flights/flightsFull.csv']) ~> flightscsv"
 		}
 	}
 }
