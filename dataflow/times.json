@@ -13,8 +13,12 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tinferDriftedColumnTypes: true,\n\twildcardPaths:['flights/flightsFull.csv']) ~> flightscsv"
+			"transformations": [
+				{
+					"name": "selector"
+				}
+			],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tinferDriftedColumnTypes: true,\n\twildcardPaths:['flights/flightsFull.csv']) ~> flightscsv\nflightscsv select(skipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selector"
 		}
 	}
 }
