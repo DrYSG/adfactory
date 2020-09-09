@@ -1,0 +1,61 @@
+{
+	"name": "flights5M",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ktg1blob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "parquet/5M",
+				"fileSystem": "adf"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "DAY_OF_WEEK",
+				"type": "INT_16"
+			},
+			{
+				"name": "AIRLINE",
+				"type": "UTF8"
+			},
+			{
+				"name": "FLIGHT_NUMBER",
+				"type": "INT_16"
+			},
+			{
+				"name": "TAIL_NUMBER",
+				"type": "UTF8"
+			},
+			{
+				"name": "ORIGIN_AIRPORT",
+				"type": "UTF8"
+			},
+			{
+				"name": "DESTINATION_AIRPORT",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISTANCE",
+				"type": "INT_16"
+			},
+			{
+				"name": "late_flight",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "depart_time",
+				"type": "INT96"
+			},
+			{
+				"name": "arrival_time",
+				"type": "INT96"
+			}
+		]
+	}
+}
