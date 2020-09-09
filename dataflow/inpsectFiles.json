@@ -7,7 +7,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ktg1Parquet",
+						"referenceName": "flightsParquet",
 						"type": "DatasetReference"
 					},
 					"name": "source"

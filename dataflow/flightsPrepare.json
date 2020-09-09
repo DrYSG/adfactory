@@ -16,28 +16,28 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ktg1Parquet",
+						"referenceName": "flightsParquet",
 						"type": "DatasetReference"
 					},
 					"name": "writeFlights5M"
 				},
 				{
 					"dataset": {
-						"referenceName": "ktg1Parquet",
+						"referenceName": "flightsParquet",
 						"type": "DatasetReference"
 					},
 					"name": "write500K"
 				},
 				{
 					"dataset": {
-						"referenceName": "ktg1Parquet",
+						"referenceName": "flightsParquet",
 						"type": "DatasetReference"
 					},
 					"name": "write50K"
 				},
 				{
 					"dataset": {
-						"referenceName": "ktg1Parquet",
+						"referenceName": "flightsParquet",
 						"type": "DatasetReference"
 					},
 					"name": "write5K"

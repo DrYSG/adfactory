@@ -1,5 +1,5 @@
 {
-	"name": "ktg1Parquet",
+	"name": "flightsParquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ktg1blob",
