@@ -1,0 +1,20 @@
+{
+	"name": "csvWrangler",
+	"properties": {
+		"type": "WranglingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "ktg1CSVwrangler",
+					"script": "",
+					"dataset": {
+						"referenceName": "ktg1CSVwrangler",
+						"type": "DatasetReference"
+					}
+				}
+			],
+			"sinks": [],
+			"script": "section Section1;\r\nshared ktg1CSVwrangler = let\r\n  AdfDoc = AzureStorage.DataLakeContents(\"https://ktg1blob.dfs.core.windows.net/adf/flights/flightsFull.csv\"),\r\n  Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv])\r\nin\r\n  Csv;\r\nshared UserQuery = let\r\n  Source = ktg1CSVwrangler\r\nin\r\n  Source;\r\n"
+		}
+	}
+}
