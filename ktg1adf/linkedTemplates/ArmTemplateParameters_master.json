@@ -17,6 +17,9 @@
 		"ktg2AML_servicePrincipalKey": {
 			"value": ""
 		},
+		"ktg1blobKey_accountKey": {
+			"value": ""
+		},
 		"ktg1blob_properties_typeProperties_url": {
 			"value": "https://ktg1blob.dfs.core.windows.net"
 		},
@@ -37,6 +40,9 @@
 		},
 		"ktg2AML_properties_typeProperties_tenant": {
 			"value": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
+		},
+		"ktg1blobKey_properties_typeProperties_url": {
+			"value": "https://ktg1blob.dfs.core.windows.net"
 		},
 		"containerUri": {
 			"value": ""

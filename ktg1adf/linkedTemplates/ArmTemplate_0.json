@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
 		},
+		"ktg1blobKey_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ktg1blobKey'"
+		},
 		"ktg1blob_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
@@ -50,6 +54,10 @@
 		"ktg2AML_properties_typeProperties_tenant": {
 			"type": "string",
 			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
+		},
+		"ktg1blobKey_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -170,6 +178,24 @@
 							"coreCount": 16,
 							"timeToLive": 10
 						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ktg1blobKey')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "for wrangling",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ktg1blobKey_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ktg1blobKey_accountKey')]"
 					}
 				}
 			},
@@ -314,6 +340,128 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ktg1CSVwrangler')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ktg1blobKey",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "flightsFull.csv",
+						"folderPath": "flights",
+						"fileSystem": "adf"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ktg1blobKey')]"
 			]
 		},
 		{

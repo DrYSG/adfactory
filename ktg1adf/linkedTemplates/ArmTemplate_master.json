@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
 		},
+		"ktg1blobKey_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ktg1blobKey'"
+		},
 		"ktg1blob_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
@@ -50,6 +54,10 @@
 		"ktg2AML_properties_typeProperties_tenant": {
 			"type": "string",
 			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
+		},
+		"ktg1blobKey_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
 		},
 		"containerUri": {
 			"type": "string",
@@ -90,6 +98,9 @@
 					"ktg2AML_servicePrincipalKey": {
 						"value": "[parameters('ktg2AML_servicePrincipalKey')]"
 					},
+					"ktg1blobKey_accountKey": {
+						"value": "[parameters('ktg1blobKey_accountKey')]"
+					},
 					"ktg1blob_properties_typeProperties_url": {
 						"value": "[parameters('ktg1blob_properties_typeProperties_url')]"
 					},
@@ -110,6 +121,9 @@
 					},
 					"ktg2AML_properties_typeProperties_tenant": {
 						"value": "[parameters('ktg2AML_properties_typeProperties_tenant')]"
+					},
+					"ktg1blobKey_properties_typeProperties_url": {
+						"value": "[parameters('ktg1blobKey_properties_typeProperties_url')]"
 					}
 				}
 			},
