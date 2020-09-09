@@ -1,0 +1,20 @@
+{
+	"name": "temp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ktg1blob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "temp",
+				"fileSystem": "adf"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
