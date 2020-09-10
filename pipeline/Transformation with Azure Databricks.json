@@ -98,7 +98,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "Shared/Transformations",
+					"notebookPath": "/Users/ygutfreund@outlook.com/Transformations",
 					"baseParameters": {
 						"input": {
 							"value": "@pipeline().parameters.inputPath",
