@@ -11,13 +11,16 @@
 		"ktg1blob_servicePrincipalKey": {
 			"value": ""
 		},
+		"ktg1blobKey_accountKey": {
+			"value": ""
+		},
 		"ktg1bricks_accessToken": {
 			"value": ""
 		},
 		"ktg2AML_servicePrincipalKey": {
 			"value": ""
 		},
-		"ktg1blobKey_accountKey": {
+		"bricksTransform_accessToken": {
 			"value": ""
 		},
 		"ktg1blob_properties_typeProperties_url": {
@@ -29,6 +32,9 @@
 		"ktg1blob_properties_typeProperties_servicePrincipalId": {
 			"value": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
 		},
+		"ktg1blobKey_properties_typeProperties_url": {
+			"value": "https://ktg1blob.dfs.core.windows.net"
+		},
 		"ktg2AML_properties_typeProperties_subscriptionId": {
 			"value": "2a6a6da4-8792-4d69-8d5a-7df4f8ea230f"
 		},
@@ -36,13 +42,13 @@
 			"value": "KTG1"
 		},
 		"ktg2AML_properties_typeProperties_servicePrincipalId": {
-			"value": "ktgApps2"
+			"value": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
 		},
 		"ktg2AML_properties_typeProperties_tenant": {
 			"value": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
 		},
-		"ktg1blobKey_properties_typeProperties_url": {
-			"value": "https://ktg1blob.dfs.core.windows.net"
+		"sourceBlob_LS_sasUri": {
+			"value": ""
 		}
 	}
 }

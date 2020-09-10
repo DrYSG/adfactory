@@ -6,161 +6,12 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "ktg1adf"
-		},
-		"amlblob_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'amlblob'"
-		},
-		"ktg1blob_servicePrincipalKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
-		},
-		"ktg1blobKey_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ktg1blobKey'"
-		},
-		"ktg1bricks_accessToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'ktg1bricks'"
-		},
-		"ktg2AML_servicePrincipalKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
-		},
-		"bricksTransform_accessToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'bricksTransform'"
-		},
-		"ktg1blob_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
-		},
-		"ktg1blob_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
-		},
-		"ktg1blob_properties_typeProperties_servicePrincipalId": {
-			"type": "string",
-			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
-		},
-		"ktg1blobKey_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
-		},
-		"ktg2AML_properties_typeProperties_subscriptionId": {
-			"type": "string",
-			"defaultValue": "2a6a6da4-8792-4d69-8d5a-7df4f8ea230f"
-		},
-		"ktg2AML_properties_typeProperties_resourceGroupName": {
-			"type": "string",
-			"defaultValue": "KTG1"
-		},
-		"ktg2AML_properties_typeProperties_servicePrincipalId": {
-			"type": "string",
-			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
-		},
-		"ktg2AML_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
-		},
-		"sourceBlob_LS_sasUri": {
-			"type": "secureString",
-			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/AZMLPipe')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "AZML Pipeline",
-						"type": "AzureMLExecutePipeline",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"mlPipelineId": "0d2712e7-d61b-4457-b183-1f93acbc7bba",
-							"experimentName": "pure-flights",
-							"mlParentRunId": "3e6fbe59-01d7-4180-a677-016f1350f293"
-						},
-						"linkedServiceName": {
-							"referenceName": "ktg2AML",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg2AML')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/bricksPipe')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "DataBricks Pipe",
-				"activities": [
-					{
-						"name": "notebookArgs",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/ygutfreund@outlook.com/adfArgs",
-							"baseParameters": {
-								"firstName": {
-									"value": "@pipeline().parameters.firstName",
-									"type": "Expression"
-								},
-								"lastName": {
-									"value": "@pipeline().parameters.lastName",
-									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "ktg1bricks",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"parameters": {
-					"firstName": {
-						"type": "string",
-						"defaultValue": "Yechezkal"
-					},
-					"lastName": {
-						"type": "string",
-						"defaultValue": "Gutfreund"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1bricks')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/flightsPreparePipe')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -189,17 +40,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "flightsPrepare",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"flightsCSV": {},
-									"writeFlights5M": {},
-									"write500K": {},
-									"write50K": {},
-									"write5K": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
@@ -221,8 +63,7 @@
 						"typeProperties": {
 							"dataset": {
 								"referenceName": "flightsParquet",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"logStorageSettings": {
 								"linkedServiceName": {
@@ -244,8 +85,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/flightsPrepare')]",
-				"[concat(variables('factoryId'), '/datasets/flightsParquet')]",
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
+				"[concat(variables('factoryId'), '/datasets/flightsParquet')]"
 			]
 		},
 		{
@@ -310,9 +150,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/flightsParquet')]",
@@ -335,324 +173,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1CSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "adf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1CSVwrangler')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blobKey",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "flightsFull.csv",
-						"folderPath": "flights",
-						"fileSystem": "adf"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blobKey')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/temp')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ktg1blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "temp",
-						"fileSystem": "adf"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/amlblob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "amlblob",
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('amlblob_connectionString')]"
-				}
-			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1blob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "ktg1blob",
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ktg1blob_properties_typeProperties_url')]",
-					"tenant": "[parameters('ktg1blob_properties_typeProperties_tenant')]",
-					"servicePrincipalId": "[parameters('ktg1blob_properties_typeProperties_servicePrincipalId')]",
-					"servicePrincipalKey": {
-						"type": "SecureString",
-						"value": "[parameters('ktg1blob_servicePrincipalKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1blobKey')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "for wrangling",
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ktg1blobKey_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('ktg1blobKey_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ktg1bricks')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "databricks",
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://adb-2645919899729973.13.azuredatabricks.net",
-					"accessToken": {
-						"type": "SecureString",
-						"value": "[parameters('ktg1bricks_accessToken')]"
-					},
-					"newClusterNodeType": "Standard_DS3_v2",
-					"newClusterNumOfWorker": "1:4",
-					"newClusterSparkEnvVars": {
-						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
-					},
-					"newClusterVersion": "7.2.x-cpu-ml-scala2.12"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mem4')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"description": "4+4, TTL=0",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "East US",
-						"dataFlowProperties": {
-							"computeType": "MemoryOptimized",
-							"coreCount": 8,
-							"timeToLive": 0
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mem8')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"description": "8+8,10 TTL, MemOpt",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "East US",
-						"dataFlowProperties": {
-							"computeType": "MemoryOptimized",
-							"coreCount": 16,
-							"timeToLive": 10
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/csvWrangler')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "WranglingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"name": "ktg1CSVwrangler",
-							"script": "",
-							"dataset": {
-								"referenceName": "ktg1CSVwrangler",
-								"type": "DatasetReference"
-							}
-						}
-					],
-					"sinks": [],
-					"script": "section Section1;\r\nshared ktg1CSVwrangler = let\r\n  AdfDoc = AzureStorage.DataLakeContents(\"https://ktg1blob.dfs.core.windows.net/adf/flights/flightsFull.csv\"),\r\n  Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv])\r\nin\r\n  Csv;\r\nshared UserQuery = let\r\n  Source = ktg1CSVwrangler\r\nin\r\n  Source;\r\n"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ktg1CSVwrangler')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/flightsPrepare')]",
@@ -750,7 +271,6 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ktg1CSV')]",
 				"[concat(variables('factoryId'), '/datasets/flightsParquet')]"
 			]
 		},
@@ -785,8 +305,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/flightsParquet')]",
-				"[concat(variables('factoryId'), '/datasets/ktg1CSV')]"
+				"[concat(variables('factoryId'), '/datasets/flightsParquet')]"
 			]
 		},
 		{
@@ -798,28 +317,15 @@
 				"annotations": [],
 				"type": "AzureMLService",
 				"typeProperties": {
-					"subscriptionId": "[parameters('ktg2AML_properties_typeProperties_subscriptionId')]",
-					"resourceGroupName": "[parameters('ktg2AML_properties_typeProperties_resourceGroupName')]",
+					"subscriptionId": "2a6a6da4-8792-4d69-8d5a-7df4f8ea230f",
+					"resourceGroupName": "KTG1",
 					"mlWorkspaceName": "ktg2AML",
-					"servicePrincipalId": "[parameters('ktg2AML_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalId": "9b452daa-e8f2-4aea-a757-79ccc2c0882e",
 					"servicePrincipalKey": {
 						"type": "SecureString",
-						"value": "[parameters('ktg2AML_servicePrincipalKey')]"
+						"value": "**********"
 					},
-					"tenant": "[parameters('ktg2AML_properties_typeProperties_tenant')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/sourceBlob_LS')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"sasUri": "[parameters('sourceBlob_LS_sasUri')]"
+					"tenant": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
 				}
 			},
 			"dependsOn": []
@@ -835,7 +341,7 @@
 					"domain": "https://adb-2645919899729973.13.azuredatabricks.net",
 					"accessToken": {
 						"type": "SecureString",
-						"value": "[parameters('bricksTransform_accessToken')]"
+						"value": "**********"
 					},
 					"newClusterNodeType": "Standard_DS3_v2",
 					"newClusterNumOfWorker": "2",
@@ -869,9 +375,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/sourceBlob_LS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SourceFilesDataset')]",
@@ -898,9 +402,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/sourceBlob_LS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DestinationFilesDataset')]",
@@ -926,9 +428,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/amlblob')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Transformation with Azure Databricks')]",
@@ -946,8 +446,7 @@
 						"typeProperties": {
 							"dataset": {
 								"referenceName": "SourceAvailabilityDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"timeout": "7.00:00:00",
 							"sleep": 10
@@ -1002,15 +501,13 @@
 						"inputs": [
 							{
 								"referenceName": "SourceFilesDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "DestinationFilesDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},

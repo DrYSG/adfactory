@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg1blob'"
 		},
+		"ktg1blobKey_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ktg1blobKey'"
+		},
 		"ktg1bricks_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'ktg1bricks'"
@@ -23,9 +27,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'ktg2AML'"
 		},
-		"ktg1blobKey_accountKey": {
+		"bricksTransform_accessToken": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ktg1blobKey'"
+			"metadata": "Secure string for 'accessToken' of 'bricksTransform'"
 		},
 		"ktg1blob_properties_typeProperties_url": {
 			"type": "string",
@@ -39,6 +43,10 @@
 			"type": "string",
 			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
 		},
+		"ktg1blobKey_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
+		},
 		"ktg2AML_properties_typeProperties_subscriptionId": {
 			"type": "string",
 			"defaultValue": "2a6a6da4-8792-4d69-8d5a-7df4f8ea230f"
@@ -49,15 +57,15 @@
 		},
 		"ktg2AML_properties_typeProperties_servicePrincipalId": {
 			"type": "string",
-			"defaultValue": "ktgApps2"
+			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
 		},
 		"ktg2AML_properties_typeProperties_tenant": {
 			"type": "string",
 			"defaultValue": "0ae0ab9e-ed14-495c-b44c-37636d04e7c5"
 		},
-		"ktg1blobKey_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://ktg1blob.dfs.core.windows.net"
+		"sourceBlob_LS_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -92,14 +100,17 @@
 					"ktg1blob_servicePrincipalKey": {
 						"value": "[parameters('ktg1blob_servicePrincipalKey')]"
 					},
+					"ktg1blobKey_accountKey": {
+						"value": "[parameters('ktg1blobKey_accountKey')]"
+					},
 					"ktg1bricks_accessToken": {
 						"value": "[parameters('ktg1bricks_accessToken')]"
 					},
 					"ktg2AML_servicePrincipalKey": {
 						"value": "[parameters('ktg2AML_servicePrincipalKey')]"
 					},
-					"ktg1blobKey_accountKey": {
-						"value": "[parameters('ktg1blobKey_accountKey')]"
+					"bricksTransform_accessToken": {
+						"value": "[parameters('bricksTransform_accessToken')]"
 					},
 					"ktg1blob_properties_typeProperties_url": {
 						"value": "[parameters('ktg1blob_properties_typeProperties_url')]"
@@ -109,6 +120,9 @@
 					},
 					"ktg1blob_properties_typeProperties_servicePrincipalId": {
 						"value": "[parameters('ktg1blob_properties_typeProperties_servicePrincipalId')]"
+					},
+					"ktg1blobKey_properties_typeProperties_url": {
+						"value": "[parameters('ktg1blobKey_properties_typeProperties_url')]"
 					},
 					"ktg2AML_properties_typeProperties_subscriptionId": {
 						"value": "[parameters('ktg2AML_properties_typeProperties_subscriptionId')]"
@@ -122,12 +136,32 @@
 					"ktg2AML_properties_typeProperties_tenant": {
 						"value": "[parameters('ktg2AML_properties_typeProperties_tenant')]"
 					},
-					"ktg1blobKey_properties_typeProperties_url": {
-						"value": "[parameters('ktg1blobKey_properties_typeProperties_url')]"
+					"sourceBlob_LS_sasUri": {
+						"value": "[parameters('sourceBlob_LS_sasUri')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "ktg1adf_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ktg1adf_ArmTemplate_0')]"
+			]
 		}
 	]
 }
