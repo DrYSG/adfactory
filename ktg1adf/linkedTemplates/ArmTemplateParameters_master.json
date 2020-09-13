@@ -8,6 +8,9 @@
 		"amlblob_connectionString": {
 			"value": ""
 		},
+		"bricksTransform_accessToken": {
+			"value": ""
+		},
 		"ktg1blob_servicePrincipalKey": {
 			"value": ""
 		},
@@ -18,9 +21,6 @@
 			"value": ""
 		},
 		"ktg2AML_servicePrincipalKey": {
-			"value": ""
-		},
-		"bricksTransform_accessToken": {
 			"value": ""
 		},
 		"ktg1blob_properties_typeProperties_url": {
