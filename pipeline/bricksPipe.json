@@ -16,14 +16,18 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Users/ygutfreund@outlook.com/adfArgs",
+					"notebookPath": "/Users/ygutfreund@outlook.com/flightsADF",
 					"baseParameters": {
-						"firstName": {
-							"value": "@pipeline().parameters.firstName",
+						"input": {
+							"value": "@pipeline().parameters.inputPath",
 							"type": "Expression"
 						},
-						"lastName": {
-							"value": "@pipeline().parameters.lastName",
+						"output": {
+							"value": "@pipeline().parameters.outputPath",
+							"type": "Expression"
+						},
+						"pipelineRunId ": {
+							"value": "@pipeline().RunId",
 							"type": "Expression"
 						}
 					}
