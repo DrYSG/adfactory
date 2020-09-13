@@ -62,7 +62,7 @@
 		"parameters": {
 			"inputPath": {
 				"type": "string",
-				"defaultValue": "parquet/50K"
+				"defaultValue": "parquet/500K"
 			},
 			"outputPath": {
 				"type": "string",
