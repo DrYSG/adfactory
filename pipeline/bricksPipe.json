@@ -4,7 +4,7 @@
 		"description": "DataBricks Pipe",
 		"activities": [
 			{
-				"name": "notebookArgs",
+				"name": "flightsDataBricks",
 				"type": "DatabricksNotebook",
 				"dependsOn": [],
 				"policy": {
@@ -38,11 +38,11 @@
 				}
 			},
 			{
-				"name": "Validation1",
+				"name": "ParquetWritten",
 				"type": "Validation",
 				"dependsOn": [
 					{
-						"activity": "notebookArgs",
+						"activity": "flightsDataBricks",
 						"dependencyConditions": [
 							"Succeeded"
 						]
