@@ -643,7 +643,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "_success",
+						"fileName": "_SUCCESS",
 						"folderPath": "temp/adf/results",
 						"fileSystem": "adf"
 					},

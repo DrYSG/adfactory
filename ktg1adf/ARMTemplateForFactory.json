@@ -269,7 +269,7 @@
 				"description": "DataBricks Pipe",
 				"activities": [
 					{
-						"name": "notebookArgs",
+						"name": "flightsDataBricks",
 						"type": "DatabricksNotebook",
 						"dependsOn": [],
 						"policy": {
@@ -303,11 +303,11 @@
 						}
 					},
 					{
-						"name": "Validation1",
+						"name": "ParquetWritten",
 						"type": "Validation",
 						"dependsOn": [
 							{
-								"activity": "notebookArgs",
+								"activity": "flightsDataBricks",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -328,7 +328,7 @@
 				"parameters": {
 					"inputPath": {
 						"type": "string",
-						"defaultValue": "parquet/50K"
+						"defaultValue": "parquet/500K"
 					},
 					"outputPath": {
 						"type": "string",
@@ -1125,7 +1125,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "_success",
+						"fileName": "_SUCCESS",
 						"folderPath": "temp/adf/results",
 						"fileSystem": "adf"
 					},
