@@ -18,24 +18,51 @@
 				"typeProperties": {
 					"notebookPath": "/Users/ygutfreund@outlook.com/adfArgs",
 					"baseParameters": {
-						"firstName": "@pipeline().parameters.firstName",
-						"lastName": "@pipeline().parameters.lastName"
+						"firstName": {
+							"value": "@pipeline().parameters.firstName",
+							"type": "Expression"
+						},
+						"lastName": {
+							"value": "@pipeline().parameters.lastName",
+							"type": "Expression"
+						}
 					}
 				},
 				"linkedServiceName": {
 					"referenceName": "ktg1bricks",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Validation1",
+				"type": "Validation",
+				"dependsOn": [
+					{
+						"activity": "notebookArgs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "bricksPipeDone",
+						"type": "DatasetReference"
+					},
+					"timeout": "7.00:00:00",
+					"sleep": 10
+				}
 			}
 		],
 		"parameters": {
-			"firstName": {
+			"inputPath": {
 				"type": "string",
-				"defaultValue": "Yechezkal"
+				"defaultValue": "parquet/50K"
 			},
-			"lastName": {
+			"outputPath": {
 				"type": "string",
-				"defaultValue": "Gutfreund"
+				"defaultValue": "temp/adf/results"
 			}
 		},
 		"annotations": []
