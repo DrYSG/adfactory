@@ -587,7 +587,8 @@
 						"type": "AzureBlobFSLocation",
 						"folderPath": "avro",
 						"fileSystem": "adf"
-					}
+					},
+					"avroCompressionCodec": "snappy"
 				},
 				"schema": {}
 			},
@@ -614,7 +615,7 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
-					"firstRowAsHeader": true,
+					"firstRowAsHeader": false,
 					"quoteChar": "\""
 				},
 				"schema": []

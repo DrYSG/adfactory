@@ -915,7 +915,8 @@
 						"type": "AzureBlobFSLocation",
 						"folderPath": "avro",
 						"fileSystem": "adf"
-					}
+					},
+					"avroCompressionCodec": "snappy"
 				},
 				"schema": {}
 			},
@@ -942,7 +943,7 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
-					"firstRowAsHeader": true,
+					"firstRowAsHeader": false,
 					"quoteChar": "\""
 				},
 				"schema": []
@@ -964,40 +965,40 @@
 								"referenceName": "flightsParquet",
 								"type": "DatasetReference"
 							},
-							"name": "in5Kcsv"
+							"name": "in5Kavro"
 						},
 						{
 							"dataset": {
 								"referenceName": "flightsParquet",
 								"type": "DatasetReference"
 							},
-							"name": "in5Kavro"
+							"name": "in5Kcsv"
 						}
 					],
 					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "flightsAVRO",
-								"type": "DatasetReference"
-							},
-							"name": "writeAvro"
-						},
 						{
 							"dataset": {
 								"referenceName": "flightsCSV",
 								"type": "DatasetReference"
 							},
 							"name": "writeCSV"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsAVRO",
+								"type": "DatasetReference"
+							},
+							"name": "writeAVRO"
 						}
 					],
 					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kcsv\nsource(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kavro\nin5Kcsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['5K/flights5K.avro'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAvro\nin5Kavro sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['5K/flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kavro\nsource(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kcsv\nin5Kcsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV\nin5Kavro sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/flightsParquet')]",
-				"[concat(variables('factoryId'), '/datasets/flightsAVRO')]",
-				"[concat(variables('factoryId'), '/datasets/flightsCSV')]"
+				"[concat(variables('factoryId'), '/datasets/flightsCSV')]",
+				"[concat(variables('factoryId'), '/datasets/flightsAVRO')]"
 			]
 		},
 		{
@@ -1024,10 +1025,10 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"in5Kcsv": {},
 									"in5Kavro": {},
-									"writeAvro": {},
-									"writeCSV": {}
+									"in5Kcsv": {},
+									"writeCSV": {},
+									"writeAVRO": {}
 								}
 							},
 							"staging": {},
