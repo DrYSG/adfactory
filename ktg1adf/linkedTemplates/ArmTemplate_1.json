@@ -187,6 +187,37 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/translateParquetCSV')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "flightsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "in5Kcsv"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "flightsCSV",
+								"type": "DatasetReference"
+							},
+							"name": "writeCSV"
+						}
+					],
+					"transformations": [],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kcsv\nin5Kcsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/flightsPreparePipe')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -313,6 +344,48 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/translateParquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/translatorCSV')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "translateParquetCSV",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "translateParquetCSV",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"in5Kcsv": {},
+									"writeCSV": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/translateParquetCSV')]"
 			]
 		}
 	]
