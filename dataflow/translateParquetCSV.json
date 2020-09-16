@@ -9,13 +9,6 @@
 						"referenceName": "flightsParquet",
 						"type": "DatasetReference"
 					},
-					"name": "in5Kavro"
-				},
-				{
-					"dataset": {
-						"referenceName": "flightsParquet",
-						"type": "DatasetReference"
-					},
 					"name": "in5Kcsv"
 				}
 			],
@@ -26,17 +19,10 @@
 						"type": "DatasetReference"
 					},
 					"name": "writeCSV"
-				},
-				{
-					"dataset": {
-						"referenceName": "flightsAVRO",
-						"type": "DatasetReference"
-					},
-					"name": "writeAVRO"
 				}
 			],
 			"transformations": [],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kavro\nsource(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kcsv\nin5Kcsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV\nin5Kavro sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kcsv\nin5Kcsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV"
 		}
 	}
 }
