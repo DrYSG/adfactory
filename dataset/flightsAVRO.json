@@ -12,7 +12,8 @@
 				"type": "AzureBlobFSLocation",
 				"folderPath": "avro",
 				"fileSystem": "adf"
-			}
+			},
+			"avroCompressionCodec": "snappy"
 		}
 	}
 }
