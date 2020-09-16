@@ -1,5 +1,5 @@
 {
-	"name": "traslateParquet",
+	"name": "translateParquet",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
