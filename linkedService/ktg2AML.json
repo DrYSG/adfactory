@@ -2,7 +2,7 @@
 	"name": "ktg2AML",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
-		"description": "newer",
+		"description": "connect to ktg2AML pure-flight-pipe",
 		"annotations": [],
 		"type": "AzureMLService",
 		"typeProperties": {
