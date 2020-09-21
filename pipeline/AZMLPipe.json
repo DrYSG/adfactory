@@ -17,6 +17,9 @@
 				"typeProperties": {
 					"mlPipelineId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a",
 					"experimentName": "pure-flights",
+					"mlPipelineParameters": {
+						"TestParquetData": "75f54d0e-3a59-4842-a878-abf68716e81d"
+					},
 					"mlParentRunId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a"
 				},
 				"linkedServiceName": {
