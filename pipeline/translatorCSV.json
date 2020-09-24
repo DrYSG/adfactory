@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "translateParquetCSV",
+						"referenceName": "parquet2CSV",
 						"type": "DataFlowReference"
 					},
 					"compute": {

@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "translateParquet",
+						"referenceName": "parquet2AVRO",
 						"type": "DataFlowReference"
 					},
 					"compute": {
