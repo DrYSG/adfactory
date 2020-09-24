@@ -91,9 +91,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"mlPipelineId": "0d2712e7-d61b-4457-b183-1f93acbc7bba",
+							"mlPipelineId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a",
 							"experimentName": "pure-flights",
-							"mlParentRunId": "3e6fbe59-01d7-4180-a677-016f1350f293"
+							"mlPipelineParameters": {
+								"TestParquetData": "75f54d0e-3a59-4842-a878-abf68716e81d"
+							},
+							"mlParentRunId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a"
 						},
 						"linkedServiceName": {
 							"referenceName": "ktg2AML",
@@ -276,13 +279,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/translator')]",
+			"name": "[concat(parameters('factoryName'), '/translatorAVRO')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "translateParquet",
+						"name": "parquet2AVRO",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -295,13 +298,11 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "translateParquet",
+								"referenceName": "parquet2AVRO",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"in5Kavro": {},
-									"in5Kcsv": {},
-									"writeCSV": {},
+									"parquet5K": {},
 									"writeAVRO": {}
 								}
 							},
@@ -316,7 +317,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/translateParquet')]"
+				"[concat(variables('factoryId'), '/dataflows/parquet2AVRO')]"
 			]
 		},
 		{
@@ -326,7 +327,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "translateParquetCSV",
+						"name": "parquet2CSV",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -339,11 +340,11 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "translateParquetCSV",
+								"referenceName": "parquet2CSV",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"in5Kcsv": {},
+									"parquet5K": {},
 									"writeCSV": {}
 								}
 							},
@@ -358,7 +359,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/translateParquetCSV')]"
+				"[concat(variables('factoryId'), '/dataflows/parquet2CSV')]"
 			]
 		},
 		{
@@ -808,7 +809,7 @@
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "newer",
+				"description": "connect to ktg2AML pure-flight-pipe",
 				"annotations": [],
 				"type": "AzureMLService",
 				"typeProperties": {
@@ -995,7 +996,7 @@
 							"name": "flights5K"
 						}
 					],
-					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as string,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as string,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as boolean,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short,\n\t\tid as integer\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\twildcardPaths:['flights/flightsFull.csv'],\n\tpartitionBy('hash', 32,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER\n\t)) ~> flightsCSV\nflightsCSV derive(late_flight = (ARRIVAL_DELAY>30) || CANCELLED || DIVERTED) ~> isLate\ncleanColumns select(mapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Clone\nClone derive({500K} = mod(\r\n    crc32(DAY_OF_WEEK, FLIGHT_NUMBER, DISTANCE,\r\n    depart_time,arrival_time),\r\n    10) == 7) ~> flag500K\nflag500K filter({500K}) ~> flights500K\nthinColumns derive(cleanFlag = false()) ~> cleanFlag\ncleanFlag derive(depart_date = toDate(toString(YEAR)+'-'+toString(MONTH)+'-'+toString(DAY)+ ' ')) ~> departDate\nisLate select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tSCHEDULED_TIME,\n\t\tDISTANCE,\n\t\tSCHEDULED_ARRIVAL,\n\t\tlate_flight\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> thinColumns\ndepartDate derive(depart_time = toTimestamp(toString(depart_date) + ' ' + \r\n    left( SCHEDULED_DEPARTURE,2) + ':' + \r\n    right(SCHEDULED_DEPARTURE,2), \r\n'yyyy-MM-dd HH:mm')) ~> departTime\ndepartTime derive(arrival_time = depart_time + minutes(toInteger(SCHEDULED_TIME))) ~> arrivalTime\narrivalTime select(mapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> cleanColumns\nClone derive({5K} = mod(\r\n    crc32(DAY_OF_WEEK, FLIGHT_NUMBER, DISTANCE,\r\n    depart_time,arrival_time),\r\n    1000) == 7) ~> flag5K\nClone derive({50K} = mod(\r\n    crc32(DAY_OF_WEEK, FLIGHT_NUMBER, DISTANCE,\r\n    depart_time,arrival_time),\r\n    100) == 7) ~> flag50K\nflag50K filter({50K}) ~> flights50K\nflag5K filter({5K}) ~> flights5K\nClone sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'5M/part[n].parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeFlights5M\nflights500K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'500K/part[n].parquet',\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write500K\nflights50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'50K/part[n].parquet',\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write50K\nflights5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'5K/part[n].parquet',\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write5K"
+					"script": "source(output(\n\t\tYEAR as short,\n\t\tMONTH as short,\n\t\tDAY as short,\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tSCHEDULED_DEPARTURE as string,\n\t\tDEPARTURE_TIME as short,\n\t\tDEPARTURE_DELAY as short,\n\t\tTAXI_OUT as short,\n\t\tWHEELS_OFF as short,\n\t\tSCHEDULED_TIME as short,\n\t\tELAPSED_TIME as short,\n\t\tAIR_TIME as short,\n\t\tDISTANCE as short,\n\t\tWHEELS_ON as short,\n\t\tTAXI_IN as short,\n\t\tSCHEDULED_ARRIVAL as string,\n\t\tARRIVAL_TIME as short,\n\t\tARRIVAL_DELAY as short,\n\t\tDIVERTED as boolean,\n\t\tCANCELLED as boolean,\n\t\tCANCELLATION_REASON as string,\n\t\tAIR_SYSTEM_DELAY as short,\n\t\tSECURITY_DELAY as boolean,\n\t\tAIRLINE_DELAY as short,\n\t\tLATE_AIRCRAFT_DELAY as short,\n\t\tWEATHER_DELAY as short,\n\t\tid as integer\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['flights/flightsFull.csv'],\n\tpartitionBy('hash', 32,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER\n\t)) ~> flightsCSV\nflightsCSV derive(late_flight = (ARRIVAL_DELAY>30) || CANCELLED || DIVERTED) ~> isLate\ncleanColumns select(mapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Clone\nClone derive({500K} = mod(\r\n    crc32(DAY_OF_WEEK, FLIGHT_NUMBER, DISTANCE,\r\n    depart_time,arrival_time),\r\n    10) == 7) ~> flag500K\nflag500K filter({500K}) ~> flights500K\nthinColumns derive(cleanFlag = false()) ~> cleanFlag\ncleanFlag derive(depart_date = toDate(toString(YEAR)+'-'+toString(MONTH)+'-'+toString(DAY)+ ' ')) ~> departDate\nisLate select(mapColumn(\n\t\tYEAR,\n\t\tMONTH,\n\t\tDAY,\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tSCHEDULED_DEPARTURE,\n\t\tDEPARTURE_TIME,\n\t\tSCHEDULED_TIME,\n\t\tDISTANCE,\n\t\tSCHEDULED_ARRIVAL,\n\t\tlate_flight\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> thinColumns\ndepartDate derive(depart_time = toTimestamp(toString(depart_date) + ' ' + \r\n    left( SCHEDULED_DEPARTURE,2) + ':' + \r\n    right(SCHEDULED_DEPARTURE,2), \r\n'yyyy-MM-dd HH:mm')) ~> departTime\ndepartTime derive(arrival_time = depart_time + minutes(toInteger(SCHEDULED_TIME))) ~> arrivalTime\narrivalTime select(mapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> cleanColumns\nClone derive({5K} = mod(\r\n    crc32(DAY_OF_WEEK, FLIGHT_NUMBER, DISTANCE,\r\n    depart_time,arrival_time),\r\n    1000) == 7) ~> flag5K\nClone derive({50K} = mod(\r\n    crc32(DAY_OF_WEEK, FLIGHT_NUMBER, DISTANCE,\r\n    depart_time,arrival_time),\r\n    100) == 7) ~> flag50K\nflag50K filter({50K}) ~> flights50K\nflag5K filter({5K}) ~> flights5K\nClone sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'5M/part[n].parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeFlights5M\nflights500K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'500K/part[n].parquet',\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write500K\nflights50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'50K/part[n].parquet',\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write50K\nflights5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'5K/part[n].parquet',\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> write5K"
 				}
 			},
 			"dependsOn": [
@@ -1030,7 +1031,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tcleanFlag as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/500K']) ~> source\nsource sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['temp/junk.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkhole"
+					"script": "source(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tcleanFlag as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/500K']) ~> source\nsource sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['temp/junk.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkhole"
 				}
 			},
 			"dependsOn": [
@@ -1039,7 +1040,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/translateParquet')]",
+			"name": "[concat(parameters('factoryName'), '/parquet2AVRO')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1051,24 +1052,10 @@
 								"referenceName": "flightsParquet",
 								"type": "DatasetReference"
 							},
-							"name": "in5Kavro"
-						},
-						{
-							"dataset": {
-								"referenceName": "flightsParquet",
-								"type": "DatasetReference"
-							},
-							"name": "in5Kcsv"
+							"name": "parquet5K"
 						}
 					],
 					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "flightsCSV",
-								"type": "DatasetReference"
-							},
-							"name": "writeCSV"
-						},
 						{
 							"dataset": {
 								"referenceName": "flightsAVRO",
@@ -1078,17 +1065,16 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kavro\nsource(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kcsv\nin5Kcsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV\nin5Kavro sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nparquet5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/flightsParquet')]",
-				"[concat(variables('factoryId'), '/datasets/flightsCSV')]",
 				"[concat(variables('factoryId'), '/datasets/flightsAVRO')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/translateParquetCSV')]",
+			"name": "[concat(parameters('factoryName'), '/parquet2CSV')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1100,7 +1086,7 @@
 								"referenceName": "flightsParquet",
 								"type": "DatasetReference"
 							},
-							"name": "in5Kcsv"
+							"name": "parquet5K"
 						}
 					],
 					"sinks": [
@@ -1113,7 +1099,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> in5Kcsv\nin5Kcsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nparquet5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV"
 				}
 			},
 			"dependsOn": [

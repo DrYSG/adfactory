@@ -173,7 +173,7 @@
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "newer",
+				"description": "connect to ktg2AML pure-flight-pipe",
 				"annotations": [],
 				"type": "AzureMLService",
 				"typeProperties": {
@@ -262,9 +262,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"mlPipelineId": "0d2712e7-d61b-4457-b183-1f93acbc7bba",
+							"mlPipelineId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a",
 							"experimentName": "pure-flights",
-							"mlParentRunId": "3e6fbe59-01d7-4180-a677-016f1350f293"
+							"mlPipelineParameters": {
+								"TestParquetData": "75f54d0e-3a59-4842-a878-abf68716e81d"
+							},
+							"mlParentRunId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a"
 						},
 						"linkedServiceName": {
 							"referenceName": "ktg2AML",
