@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "translateParquetCSV",
+				"name": "parquet2CSV",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {

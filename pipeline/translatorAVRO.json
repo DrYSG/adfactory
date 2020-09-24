@@ -1,9 +1,9 @@
 {
-	"name": "translator",
+	"name": "translatorAVRO",
 	"properties": {
 		"activities": [
 			{
-				"name": "translateParquet",
+				"name": "parquet2AVRO",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
