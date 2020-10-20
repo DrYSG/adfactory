@@ -158,6 +158,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "parquet5K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "parquet50K"
 						}
 					],
 					"sinks": [
@@ -166,11 +173,18 @@
 								"referenceName": "flightsAVRO",
 								"type": "DatasetReference"
 							},
-							"name": "writeAVRO"
+							"name": "writeAVRO5K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsAVRO",
+								"type": "DatasetReference"
+							},
+							"name": "writeAVRO50K"
 						}
 					],
 					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nparquet5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nsource(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet50K\nparquet5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K\nparquet50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights50K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO50K"
 				}
 			},
 			"dependsOn": []
@@ -316,7 +330,9 @@
 								"parameters": {},
 								"datasetParameters": {
 									"parquet5K": {},
-									"writeAVRO": {}
+									"parquet50K": {},
+									"writeAVRO5K": {},
+									"writeAVRO50K": {}
 								}
 							},
 							"staging": {},
