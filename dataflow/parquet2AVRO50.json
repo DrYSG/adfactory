@@ -1,0 +1,28 @@
+{
+	"name": "parquet2AVRO50",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "flightsParquet",
+						"type": "DatasetReference"
+					},
+					"name": "parquet5K"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "flightsAVRO",
+						"type": "DatasetReference"
+					},
+					"name": "writeAVRO5K"
+				}
+			],
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet5K\nparquet5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K"
+		}
+	}
+}
