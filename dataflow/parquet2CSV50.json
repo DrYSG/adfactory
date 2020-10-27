@@ -1,0 +1,28 @@
+{
+	"name": "parquet2CSV50",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "flightsParquet",
+						"type": "DatasetReference"
+					},
+					"name": "parquet50K"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "flightsCSV",
+						"type": "DatasetReference"
+					},
+					"name": "writeCSV"
+				}
+			],
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet50K\nparquet50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights50K.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeCSV"
+		}
+	}
+}
