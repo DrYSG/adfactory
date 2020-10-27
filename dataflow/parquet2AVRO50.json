@@ -9,7 +9,7 @@
 						"referenceName": "flightsParquet",
 						"type": "DatasetReference"
 					},
-					"name": "parquet5K"
+					"name": "parquet50K"
 				}
 			],
 			"sinks": [
@@ -18,11 +18,11 @@
 						"referenceName": "flightsAVRO",
 						"type": "DatasetReference"
 					},
-					"name": "writeAVRO5K"
+					"name": "writeAVRO50K"
 				}
 			],
 			"transformations": [],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet5K\nparquet5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet50K\nparquet50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights50K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO50K"
 		}
 	}
 }
