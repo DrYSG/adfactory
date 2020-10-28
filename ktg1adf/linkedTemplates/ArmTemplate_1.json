@@ -169,6 +169,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "parquet500K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "parquet5M"
 						}
 					],
 					"sinks": [
@@ -192,6 +199,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "writeAVRO500K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsAVRO",
+								"type": "DatasetReference"
+							},
+							"name": "writeAVRO5M"
 						}
 					],
 					"transformations": [
@@ -203,9 +217,12 @@
 						},
 						{
 							"name": "typeCast500K"
+						},
+						{
+							"name": "typeCast5M"
 						}
 					],
-					"script": "source(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet50K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/500K/*']) ~> parquet500K\nparquet5K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast\nparquet50K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast50K\nparquet500K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast500K\ntypeCast sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K\ntypeCast50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights50K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO50K\ntypeCast500K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights500K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO500K"
+					"script": "source(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet50K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/500K/*']) ~> parquet500K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5M/*']) ~> parquet5M\nparquet5K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast\nparquet50K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast50K\nparquet500K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast500K\nparquet5M derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast5M\ntypeCast sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K\ntypeCast50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights50K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO50K\ntypeCast500K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights500K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO500K\ntypeCast5M sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5M.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5M"
 				}
 			},
 			"dependsOn": []
@@ -329,9 +346,11 @@
 									"parquet5K": {},
 									"parquet50K": {},
 									"parquet500K": {},
+									"parquet5M": {},
 									"writeAVRO5K": {},
 									"writeAVRO50K": {},
-									"writeAVRO500K": {}
+									"writeAVRO500K": {},
+									"writeAVRO5M": {}
 								}
 							},
 							"staging": {},
