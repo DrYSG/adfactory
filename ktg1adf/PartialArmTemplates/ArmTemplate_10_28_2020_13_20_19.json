@@ -1,0 +1,85 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ktg1adf"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/parquet2AVRO')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "flightsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "parquet5K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "parquet50K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "parquet500K"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "flightsAVRO",
+								"type": "DatasetReference"
+							},
+							"name": "writeAVRO5K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsAVRO",
+								"type": "DatasetReference"
+							},
+							"name": "writeAVRO50K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsAVRO",
+								"type": "DatasetReference"
+							},
+							"name": "writeAVRO500K"
+						}
+					],
+					"transformations": [
+						{
+							"name": "typeCast"
+						},
+						{
+							"name": "typeCast50K"
+						},
+						{
+							"name": "typeCast500K"
+						}
+					],
+					"script": "source(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet50K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/500K/*']) ~> parquet500K\nparquet5K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast\nparquet50K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast50K\nparquet500K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast500K\ntypeCast sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K\ntypeCast50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights50K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO50K\ntypeCast500K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights500K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO500K"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
