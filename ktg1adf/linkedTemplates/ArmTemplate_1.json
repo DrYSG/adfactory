@@ -155,6 +155,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "parquet5K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "parquet50K"
 						}
 					],
 					"sinks": [
@@ -164,10 +171,24 @@
 								"type": "DatasetReference"
 							},
 							"name": "writeAVRO5K"
+						},
+						{
+							"dataset": {
+								"referenceName": "flightsAVRO",
+								"type": "DatasetReference"
+							},
+							"name": "writeAVRO50K"
 						}
 					],
-					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nparquet5K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K"
+					"transformations": [
+						{
+							"name": "typeCast"
+						},
+						{
+							"name": "typeCast50K"
+						}
+					],
+					"script": "source(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/5K/*']) ~> parquet5K\nsource(output(\n\t\tDAY_OF_WEEK as short,\n\t\tAIRLINE as string,\n\t\tFLIGHT_NUMBER as short,\n\t\tTAIL_NUMBER as string,\n\t\tORIGIN_AIRPORT as string,\n\t\tDESTINATION_AIRPORT as string,\n\t\tDISTANCE as short,\n\t\tlate_flight as boolean,\n\t\tdepart_time as timestamp,\n\t\tarrival_time as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['parquet/50K/*']) ~> parquet50K\nparquet5K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast\nparquet50K derive(FLIGHT_NUMBER = toInteger(FLIGHT_NUMBER),\n\t\tDAY_OF_WEEK = toInteger(DAY_OF_WEEK),\n\t\tDISTANCE = toInteger(DISTANCE)) ~> typeCast50K\ntypeCast sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights5K.avro'],\n\tmapColumn(\n\t\tDAY_OF_WEEK,\n\t\tAIRLINE,\n\t\tFLIGHT_NUMBER,\n\t\tTAIL_NUMBER,\n\t\tORIGIN_AIRPORT,\n\t\tDESTINATION_AIRPORT,\n\t\tDISTANCE,\n\t\tlate_flight,\n\t\tdepart_time,\n\t\tarrival_time\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO5K\ntypeCast50K sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flights50K.avro'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> writeAVRO50K"
 				}
 			},
 			"dependsOn": []
@@ -382,7 +403,9 @@
 								"parameters": {},
 								"datasetParameters": {
 									"parquet5K": {},
-									"writeAVRO5K": {}
+									"parquet50K": {},
+									"writeAVRO5K": {},
+									"writeAVRO50K": {}
 								}
 							},
 							"staging": {},
@@ -417,49 +440,12 @@
 								"wildcardFileName": "*"
 							}
 						}
-					},
-					{
-						"name": "parquet2AVRO50",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "parquet2AVRO",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "parquet2AVRO50",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"parquet50K": {},
-									"writeAVRO50K": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							}
-						}
 					}
 				],
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/parquet2AVRO')]",
-				"[concat(variables('factoryId'), '/dataflows/parquet2AVRO50')]"
+				"[concat(variables('factoryId'), '/dataflows/parquet2AVRO')]"
 			]
 		},
 		{
