@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "parquet/5K",
+				"folderPath": "parquet",
 				"fileSystem": "adf"
 			},
 			"compressionCodec": "snappy"
