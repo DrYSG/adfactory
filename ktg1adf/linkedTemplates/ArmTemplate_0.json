@@ -204,6 +204,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/mem32')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"description": "Mem opt 32+16 drivers, 10 TTL",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "East US",
+						"dataFlowProperties": {
+							"computeType": "MemoryOptimized",
+							"coreCount": 48,
+							"timeToLive": 10
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/mem4')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
@@ -706,31 +726,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ktg1bricks')]",
 				"[concat(variables('factoryId'), '/datasets/bricksPipeDone')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/csvWrangler')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "WranglingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"name": "ktg1CSVwrangler",
-							"script": "",
-							"dataset": {
-								"referenceName": "ktg1CSVwrangler",
-								"type": "DatasetReference"
-							}
-						}
-					],
-					"sinks": [],
-					"script": "section Section1;\r\nshared ktg1CSVwrangler = let\r\n  AdfDoc = AzureStorage.DataLakeContents(\"https://ktg1blob.dfs.core.windows.net/adf/flights/flightsFull.csv\"),\r\n  Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv])\r\nin\r\n  Csv;\r\nshared UserQuery = let\r\n  Source = ktg1CSVwrangler\r\nin\r\n  Source;\r\n"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ktg1CSVwrangler')]"
 			]
 		}
 	]
