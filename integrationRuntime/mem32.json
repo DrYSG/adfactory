@@ -1,0 +1,17 @@
+{
+	"name": "mem32",
+	"properties": {
+		"type": "Managed",
+		"description": "Mem opt 32+16 drivers, 10 TTL",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US",
+				"dataFlowProperties": {
+					"computeType": "MemoryOptimized",
+					"coreCount": 48,
+					"timeToLive": 10
+				}
+			}
+		}
+	}
+}
