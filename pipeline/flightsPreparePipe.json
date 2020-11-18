@@ -26,10 +26,11 @@
 						"referenceName": "flightsPrepare",
 						"type": "DataFlowReference"
 					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					}
+					"integrationRuntime": {
+						"referenceName": "mem32",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
 				}
 			},
 			{
