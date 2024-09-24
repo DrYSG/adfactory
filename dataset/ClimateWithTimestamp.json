@@ -11,6 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "ClimateWithTimeStamp",
+				"folderPath": "ClimateWithTimeStamp",
 				"fileSystem": "climate"
 			},
 			"columnDelimiter": ",",
