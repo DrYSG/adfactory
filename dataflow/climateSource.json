@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "climate",
+						"referenceName": "ClimateWithTimestamp",
 						"type": "DatasetReference"
 					},
 					"name": "ClimateWithTimeStamp"
@@ -43,13 +43,6 @@
 				"     errors: true) ~> cast1",
 				"cast1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          date as string,",
-				"          meantemp as string,",
-				"          humidity as string,",
-				"          wind_speed as string,",
-				"          meanpressure as string",
-				"     ),",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
