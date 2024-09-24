@@ -9,7 +9,7 @@
 						"referenceName": "climate",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "climateSourceData"
 				}
 			],
 			"sinks": [],
@@ -24,7 +24,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     ignoreNoFilesFound: false) ~> climateSourceData"
 			]
 		}
 	}
