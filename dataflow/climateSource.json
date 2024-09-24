@@ -23,7 +23,7 @@
 			],
 			"transformations": [
 				{
-					"name": "cast1"
+					"name": "DateStringToTimeStamp"
 				}
 			],
 			"scriptLines": [
@@ -38,10 +38,10 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> climateSourceData",
 				"climateSourceData cast(output(",
-				"          date as timestamp",
+				"          date as timestamp 'yyyy-MM-dd'",
 				"     ),",
-				"     errors: true) ~> cast1",
-				"cast1 sink(allowSchemaDrift: true,",
+				"     errors: true) ~> DateStringToTimeStamp",
+				"DateStringToTimeStamp sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
 				"     preCommands: [],",
