@@ -13,7 +13,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "cast1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          date as string,",
@@ -24,7 +28,11 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> climateSourceData"
+				"     ignoreNoFilesFound: false) ~> climateSourceData",
+				"climateSourceData cast(output(",
+				"          date as timestamp",
+				"     ),",
+				"     errors: true) ~> cast1"
 			]
 		}
 	}
