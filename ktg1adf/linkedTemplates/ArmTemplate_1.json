@@ -403,11 +403,13 @@
 						"     errors: true) ~> DateStringToTimeStamp",
 						"DateStringToTimeStamp sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     partitionFileNames:['ClimateWithTimeStamp.csv'],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> ClimateWithTimeStamp"
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> ClimateWithTimeStamp"
 					]
 				}
 			},
