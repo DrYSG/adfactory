@@ -55,6 +55,10 @@
 			"type": "string",
 			"defaultValue": "KTG1"
 		},
+		"ktg2AML_properties_typeProperties_mlWorkspaceName": {
+			"type": "string",
+			"defaultValue": "ktg2AML"
+		},
 		"ktg2AML_properties_typeProperties_servicePrincipalId": {
 			"type": "string",
 			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
@@ -101,7 +105,9 @@
 					},
 					"newClusterNodeType": "Standard_DS3_v2",
 					"newClusterNumOfWorker": "2",
-					"newClusterVersion": "5.5.x-cpu-ml-scala2.11"
+					"newClusterVersion": "5.5.x-cpu-ml-scala2.11",
+					"clusterOption": "Fixed",
+					"newClusterInitScripts": []
 				}
 			},
 			"dependsOn": []
@@ -163,7 +169,9 @@
 					"newClusterSparkEnvVars": {
 						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
 					},
-					"newClusterVersion": "7.2.x-cpu-ml-scala2.12"
+					"newClusterVersion": "7.2.x-cpu-ml-scala2.12",
+					"clusterOption": "Fixed",
+					"newClusterInitScripts": []
 				}
 			},
 			"dependsOn": []
@@ -179,7 +187,7 @@
 				"typeProperties": {
 					"subscriptionId": "[parameters('ktg2AML_properties_typeProperties_subscriptionId')]",
 					"resourceGroupName": "[parameters('ktg2AML_properties_typeProperties_resourceGroupName')]",
-					"mlWorkspaceName": "ktg2AML",
+					"mlWorkspaceName": "[parameters('ktg2AML_properties_typeProperties_mlWorkspaceName')]",
 					"servicePrincipalId": "[parameters('ktg2AML_properties_typeProperties_servicePrincipalId')]",
 					"servicePrincipalKey": {
 						"type": "SecureString",
@@ -282,12 +290,13 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"mlPipelineId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a",
 							"experimentName": "pure-flights",
 							"mlPipelineParameters": {
 								"TestParquetData": "75f54d0e-3a59-4842-a878-abf68716e81d"
 							},
-							"mlParentRunId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a"
+							"mlParentRunId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a",
+							"mlExecutionType": "pipeline",
+							"mlPipelineId": "3587e6d3-d8ae-4ac8-a985-70c97a398b7a"
 						},
 						"linkedServiceName": {
 							"referenceName": "ktg2AML",
@@ -295,6 +304,9 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -648,84 +660,52 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/bricksPipe')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/climate')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "DataBricks Pipe",
-				"activities": [
-					{
-						"name": "flightsDataBricks",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/ygutfreund@outlook.com/flightsADF",
-							"baseParameters": {
-								"input": {
-									"value": "@pipeline().parameters.inputPath",
-									"type": "Expression"
-								},
-								"output": {
-									"value": "@pipeline().parameters.outputPath",
-									"type": "Expression"
-								},
-								"pipelineRunId ": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "ktg1bricks",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "ParquetWritten",
-						"type": "Validation",
-						"dependsOn": [
-							{
-								"activity": "flightsDataBricks",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "bricksPipeDone",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"timeout": "7.00:00:00",
-							"sleep": 10
-						}
-					}
-				],
-				"parameters": {
-					"inputPath": {
-						"type": "string",
-						"defaultValue": "parquet/500K"
-					},
-					"outputPath": {
-						"type": "string",
-						"defaultValue": "temp/adf/results"
-					}
+				"linkedServiceName": {
+					"referenceName": "ktg1blob",
+					"type": "LinkedServiceReference"
 				},
-				"annotations": []
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "DailyDelhiClimateTrain.csv",
+						"fileSystem": "climate"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "date",
+						"type": "String"
+					},
+					{
+						"name": "meantemp",
+						"type": "String"
+					},
+					{
+						"name": "humidity",
+						"type": "String"
+					},
+					{
+						"name": "wind_speed",
+						"type": "String"
+					},
+					{
+						"name": "meanpressure",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ktg1bricks')]",
-				"[concat(variables('factoryId'), '/datasets/bricksPipeDone')]"
+				"[concat(variables('factoryId'), '/linkedServices/ktg1blob')]"
 			]
 		}
 	]

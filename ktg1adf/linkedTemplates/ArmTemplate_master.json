@@ -55,6 +55,10 @@
 			"type": "string",
 			"defaultValue": "KTG1"
 		},
+		"ktg2AML_properties_typeProperties_mlWorkspaceName": {
+			"type": "string",
+			"defaultValue": "ktg2AML"
+		},
 		"ktg2AML_properties_typeProperties_servicePrincipalId": {
 			"type": "string",
 			"defaultValue": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
@@ -83,7 +87,7 @@
 		{
 			"name": "ktg1adf_ArmTemplate_0",
 			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
+			"apiVersion": "2024-03-01",
 			"properties": {
 				"mode": "incremental",
 				"templateLink": {
@@ -130,6 +134,9 @@
 					"ktg2AML_properties_typeProperties_resourceGroupName": {
 						"value": "[parameters('ktg2AML_properties_typeProperties_resourceGroupName')]"
 					},
+					"ktg2AML_properties_typeProperties_mlWorkspaceName": {
+						"value": "[parameters('ktg2AML_properties_typeProperties_mlWorkspaceName')]"
+					},
 					"ktg2AML_properties_typeProperties_servicePrincipalId": {
 						"value": "[parameters('ktg2AML_properties_typeProperties_servicePrincipalId')]"
 					},
@@ -146,7 +153,7 @@
 		{
 			"name": "ktg1adf_ArmTemplate_1",
 			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
+			"apiVersion": "2024-03-01",
 			"properties": {
 				"mode": "incremental",
 				"templateLink": {

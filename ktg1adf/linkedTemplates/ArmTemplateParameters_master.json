@@ -41,6 +41,9 @@
 		"ktg2AML_properties_typeProperties_resourceGroupName": {
 			"value": "KTG1"
 		},
+		"ktg2AML_properties_typeProperties_mlWorkspaceName": {
+			"value": "ktg2AML"
+		},
 		"ktg2AML_properties_typeProperties_servicePrincipalId": {
 			"value": "9b452daa-e8f2-4aea-a757-79ccc2c0882e"
 		},
