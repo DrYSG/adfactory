@@ -43,6 +43,7 @@
 				"     errors: true) ~> DateStringToTimeStamp",
 				"DateStringToTimeStamp sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     partitionFileNames:[''],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
